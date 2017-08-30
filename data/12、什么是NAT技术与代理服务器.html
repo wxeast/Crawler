@@ -1,0 +1,1240 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+            <link rel="canonical" href="http://blog.csdn.net/wx_east/article/details/74332253"/> 
+
+   
+
+  
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848"> 
+       
+    <title>什么是NAT技术与代理服务器 - 晓东的博客
+        - CSDN博客</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="1、NAT技术简单了解1.1、关于NAT1.2、NAT的功能1.3、NAT实现方式 1.4、NAT的分类1.5、NAT技术的应用 1.6、NAT技术的弊端1.7、NAT技术的局限性2、代理服务器介绍2.1、概念2.2、代理服务器功能2.3、代理分类" />
+
+    <meta name="keywords" content="NAT技术,代理服务器" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+       
+       
+        <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/skin-yellow/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/WX_East/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/default.css" />
+ 
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+  
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+     
+        <div class="tracking-ad" data-view="true" data-mod="ad_popu_72"  data-mtp="62" data-order="40" data-con="ad_content_2072" >
+                     <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+                <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	                <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+                <script>  document.getElementById("popuLayer_js_q").onload = function () { var styObjd = styObj = { width: "300px", "height": parseInt(250) + 28 }; window.CSDN.Layer.PopuLayer("#layerd", { storageName: "layerd", styleObj: styObjd, total: 50, expoire: 1000 * 60 }); }</script><!-- 投放代码 --><script type="text/javascript">                    /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({ id: "u2895327" });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+        </div>
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/wx_east">晓东的博客</a></h2>
+            <h3></h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/wx_east?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/wx_east?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/wx_east/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "WX_East";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/wx_east";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://blog.csdn.net/epubit17/article/details/76811996">
+<font color=red><strong>赠书 | 异步2周年,技术图书免费选</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/turingbooks/article/details/77479427">
+<font color=blue><strong>程序员8月书讯</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="https://gitee.com/enterprises?from=csdn-sqbkxq">
+<font color=red><strong>项目管理+代码托管+文档协作，开发更流畅</strong></font></a>
+
+</div>                        </div>
+
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+      var isBole = false; 
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=%e4%bb%80%e4%b9%88%e6%98%afNAT%e6%8a%80%e6%9c%af%e4%b8%8e%e4%bb%a3%e7%90%86%e6%9c%8d%e5%8a%a1%e5%99%a8&u=http://blog.csdn.net/wx_east/article/details/74332253"
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+    <h1>
+        <span class="link_title"><a href="/wx_east/article/details/74332253">
+        什么是NAT技术与代理服务器        
+           
+        </a>
+        </span>
+
+         
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/NAT%e6%8a%80%e6%9c%af' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">NAT技术</a><a href='http://www.csdn.net/tag/%e4%bb%a3%e7%90%86%e6%9c%8d%e5%8a%a1%e5%99%a8' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">代理服务器</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2017-07-04 17:07</span>
+            <span class="link_view" title="阅读次数">99人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(0)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('%e4%bb%80%e4%b9%88%e6%98%afNAT%e6%8a%80%e6%9c%af%e4%b8%8e%e4%bb%a3%e7%90%86%e6%9c%8d%e5%8a%a1%e5%99%a8','74332253');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(74332253,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('6770252','WX_East','top','74332253');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">Linux<em>（19）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/WX_East/article/category/6770252"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_6770252">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<h1><span style="font-size:18px; color:#6600cc">1、NAT技术简单了解</span></h1>
+<h2><span style="font-size:14px; color:#cc33cc">1.1、关于NAT</span></h2>
+<div><span style="font-size:12px"><span style="white-space:pre"></span>NAT英文全称是“Network Address Translation”，中文意思是“网络地址转换”，它是一个IETF(Internet Engineering Task Force, Internet工程任务组)标准，允许一个整体机构以一个公用IP（Internet Protocol）地址出现在Internet上。顾名思义，它是一种把内部私有网络地址（IP地址）翻译成合法网络IP地址的技术，如下图所示。因此我们可以认为，NAT在一定程度上，能够有效的解决公网地址不足的问题。</span></div>
+<div><span style="font-size:12px"><strong>公有IP地址</strong>：也叫全局地址，是指合法的IP地址，它是由NIC（网络信息中心）或者ISP(网络服务提供商)分配的地址，对外代表一个或多个内部局部地址，是全球统一的可寻 址的地址。<br>
+<strong>私有IP地址</strong>：也叫内部地址，属于非注册地址，专门为组织机构内部使用。因特网分配编号委员会（IANA）保留了3块IP地址做为私有IP地址：</span></div>
+<div><span style="font-size:12px"></span><pre code_snippet_id="2470115" snippet_file_name="blog_20170704_1_8358823"  name="code" class="html">10.0.0.0 ——— 10.255.255.255
+
+172.16.0.0——— 172.16.255.255
+
+192.168.0.0———192.168.255.255</pre><strong>地址池</strong>：地址池是有一些外部地址（全球唯一的IP地址）组合而成，我们称这样的一个地址集合为地址池。在内部网络的数据包通过地址转换到达外部网络时，将会在地址池中选择某个IP地址作为数据包的源IP地址，这样可以有效的利用用户的外部地址，提高访问外部网络的能力。<br>
+<img src="http://img.blog.csdn.net/20170704163441990?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</div>
+<div><span style="font-size:12px">简单地说，NAT就是在局域网内部网络中使用内部地址，而当内部节点要与外部网络进行通讯时，就在网关（可以理解为出口，打个比方就像院子的门一样）处，将内部地址替换成公用地址，从而在外部公网（internet）上正常使用，NAT可以使多台计算机共享Internet连接，这一功能很好地解决了公共 IP地址紧缺的问题。通过这种方法，可以只申请一个合法IP地址，就把整个局域网中的计算机接入Internet中。这时，NAT屏蔽了内部网络，所有内部网计算机对于公共网络来说是不可见的，而内部网计算机用户通常不会意识到NAT的存在。如下图所示。这里提到的内部地址，是指在内部网络中分配给节点的私有IP地址，这个地址只能在内部网络中使用，不能被路由转发。</span><br>
+</div>
+<div><span style="font-size:12px">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<img src="http://img.blog.csdn.net/20170704163726543?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</span></div>
+<h2><span style="font-size:14px; color:#cc33cc">1.2、NAT的功能</span></h2>
+<div><span style="font-size:12px">NAT不仅能解决了lP地址不足的问题，而且还能够有效地避免来自网络外部的攻击，隐藏并保护网络内部的计算机。<br>
+1.宽带分享：这是 NAT 主机的最大功能。<br>
+2.安全防护：NAT 之内的 PC 联机到 Internet 上面时，他所显示的 IP 是 NAT 主机的公共 IP，所以 Client 端的 PC 当然就具有一定程度的安全了，外界在进行 portscan（端口扫描） 的时候，就侦测不到源Client 端的 PC
+<br>
+</span></div>
+<div><span style="font-size:12px">NAT 功能通常被集成到路由器、防火墙、ISDN路由器或者单独的NAT设备中。比如Cisco路由器中已经加入这一功能，网络管理员只需在路由器的IOS中设置NAT功能，就可以实现对内部网络的屏蔽。再比如防火墙将WEB Server的内部地址192.168.1.1映射为外部地址202.96.23.11，外部访问202.96.23.11地址实际上就是访问访问 192.168.1.1。此外，对于资金有限的小型企业来说，现在通过软件也可以实现这一功能。Windows
+ 98 SE、Windows 2000 都包含了这一功能。</span></div>
+<h2><span style="font-size:14px; color:#cc33cc">1.3、NAT实现方式&nbsp;</span></h2>
+<div><span style="font-size:12px">NAT的实现方式有三种，即静态转换Static Nat、动态转换Dynamic Nat和端口多路复用OverLoad。<br>
+静态转换是指将内部网络的私有IP地址转换为公有IP地址，IP地址对是一对一的，是一成不变的，某个私有IP地址只转换为某个公有IP地址。借助于静态转换，可以实现外部网络对内部网络中某些特定设备（如服务器）的访问。<br>
+动态转换是指将内部网络的私有IP地址转换为公用IP地址时，IP地址是不确定的，是随机的，所有被授权访问上Internet的私有IP地址可随机转换为任何指定的合法IP地址。也就是说，只要指定哪些内部地址可以进行转换，以及用哪些合法地址作为外部地址时，就可以进行动态转换。动态转换可以使用多个合法外部地址集。当ISP提供的合法IP地址略少于网络内部的计算机数量时。可以采用动态转换的方式。<br>
+端口多路复用（Port address Translation,PAT)是指改变外出数据包的源端口并进行端口转换，即端口地址转换（PAT，Port Address Translation).采用端口多路复用方式。内部网络的所有主机均可共享一个合法外部IP地址实现对Internet的访问，从而可以最大限度地节约IP地址资源。同时，又可隐藏网络内部的所有主机，有效避免来自internet的攻击。因此，目前网络中应用最多的就是端口多路复用方式。<br>
+ALG（Application Level Gateway），即应用程序级网关技术：传统的NAT技术只对IP层和传输层头部进行转换处理，但是一些应用层协议，在协议数据报文中包含了地址信息。为了使得这些应用也能透明地完成NAT转换，NAT使用一种称作ALG的技术，它能对这些应用程序在通信时所包含的地址信息也进行相应的NAT转换。例如：对于FTP协议的PORT/PASV命令、DNS协议的 &quot;A&quot; 和 &quot;PTR&quot; queries命令和部分ICMP消息类型等都需要相应的ALG来支持。<br>
+如果协议数据报文中不包含地址信息，则很容易利用传统的NAT技术来完成透明的地址转换功能，通常我们使用的如下应用就可以直接利用传统的NAT技术：HTTP、TELNET、FINGER、NTP、NFS、ARCHIE、RLOGIN、RSH、RCP等。</span></div>
+<h2><span style="font-size:14px; color:#cc33cc">1.4、NAT的分类</span></h2>
+<div><span style="font-size:12px">NAT有三种类型：静态NAT(Static NAT)、动态地址NAT(Pooled NAT)、网络地址端口转换NAPT（Port-Level NAT）。</span></div>
+<div>
+<h3><span style="font-size:12px">1.4.1静态NAT</span></h3>
+<span style="font-size:12px">通过手动设置，使 Internet 客户进行的通信能够映射到某个特定的私有网络地址和端口。如果想让连接在 Internet 上的计算机能够使用某个私有网络上的服务器（如网站服务器）以及应用程序（如游戏），那么静态映射是必需的。静态映射不会从 NAT 转换表中删除。<br>
+　　如果在 NAT 转换表中存在某个映射，那么 NAT 只是单向地从 Internet 向私有网络传送数据。这样，NAT 就为连接到私有网络部分的计算机提供了某种程度的保护。但是，如果考虑到 Internet 的安全性，NAT 就要配合全功能的防火墙一起使用。<br>
+对于以上网络拓扑图，当内网主机 10.1.1.1如果要与外网的主机201.0.0.11通信时，主机（IP：10.1.1.1）的数据包经过路由器时，路由器通过查找NAT table 将IP数据包的源IP地址（10.1.1.1）改成与之对应的全局IP地址（201.0.0.1），而目标IP地址201.0.0.11保持不变，这样，数据包就能到达201.0.0.11。而当主机HostB(IP:201.0.0.11) 响应的数据包到达与内网相连接的路由器时，路由器同样查找NAT table，将IP数据包的目的IP 地址改成10.1.1.1，这样内网主机就能接收到外网主机发过来的数据包。在静态NAT方式中，内部的IP地址与公有IP地址是一种一一对应的映射关系，所以，采用这种方式的前提是，机构能够申请到足够多的全局IP地址。<br>
+</span>
+<h3><span style="font-size:12px">1.4.2 动态NAT</span></h3>
+<span style="font-size:12px">动态地址NAT只是转换IP地址，它为每一个内部的IP地址分配一个临时的外部IP地址，主要应用于拨号，对于频繁的远程联接也可以采用动态NAT。当远程用户联接上之后，动态地址NAT就会分配给他一个IP地址，用户断开时，这个IP地址就会被释放而留待以后使用。<br>
+动态NAT方式适合于 当机构申请到的全局IP地址较少，而内部网络主机较多的情况。内网主机IP与全局IP地址是多对一的关系。当数据包进出内网时，具有NAT功能的设备对IP数据包的处理与静态NAT的一样，只是NAT table表中的记录是动态的，若内网主机在一定时间内没有和外部网络通信，有关它的IP地址映射关系将会被删除，并且会把该全局IP地址分配给新的IP数据包使用，形成新的NAT table映射记录。<br>
+</span>
+<h3><span style="font-size:12px">1.4.3网络地址端口转换NAPT</span></h3>
+<span style="font-size:12px">网络地址端口转换NAPT（Network Address Port Translation）则是把内部地址映射到外部网络的一个IP地址的不同端口上。它可以将中小型的网络隐藏在一个合法的IP地址后面。NAPT与 动态地址NAT不同，它将内部连接映射到外部网络中的一个单独的IP地址上，同时在该地址上加上一个由NAT设备选定的端口号。</span></div>
+<h2><span style="font-size:14px; color:#cc33cc">1.5、NAT技术的应用&nbsp;</span></h2>
+<div><span style="font-size:12px">NAT主要可以实现以下几个功能：数据包伪装、平衡负载、端口转发和透明代理。<br>
+<strong>数据伪装:</strong> 可以将内网数据包中的地址信息更改成统一的对外地址信息，不让内网主机直接暴露在因特网上，保证内网主机的安全。同时，该功能也常用来实现共享上网。例如，内网主机访问外网时，为了隐藏内网拓扑结构，使用全局地址替换私有地址。<br>
+<strong>端口转发:</strong> 当内网主机对外提供服务时，由于使用的是内部私有IP地址，外网无法直接访问。因此，需要在网关上进行端口转发，将特定服务的数据包转发给内网主机。例如公司小王在自己的服务器上架设了一个Web网站，他的IP地址为192.168.0.5，使用默认端口80，现在他想让局域网外的用户也能直接访问他的Web站点。利用NAT即可很轻松的解决这个问题，服务器的IP地址为210.59.120.89，那么为小王分配一个端口，例如81，即所有访问210.59.120.89:81的请求都自动转向192.168.0.5:80，而且这个过程对用户来说是透明的。<br>
+<strong>负载平衡:</strong>目的地址转换NAT可以重定向一些服务器的连接到其他随机选定的服务器。例如1.2.3所讲的目的NAT的例子。<br>
+<strong>失效终结:</strong>目的地址转换NAT可以用来提供高可靠性的服务。如果一个系统有一台通过路由器访问的关键服务器，一旦路由器检测到该服务器当机，它可以使用目的地址转换NAT透明的把连接转移到一个备份服务器上，提高系统的可靠性。<br>
+<strong>透明代理:</strong>例如自己架设的服务器空间不足，需要将某些链接指向存在另外一台服务器的空间；或者某台计算机上没有安装IIS服务，但是却想让网友访问该台计算机上的内容，这个时候利用IIS的Web站点重定向即可轻松的帮助我们搞定。</span></div>
+<h2><span style="font-size:14px; color:#cc33cc">1.6、NAT技术的弊端</span></h2>
+<div><span style="font-size:12px">在一个具有NAT功能的路由器下的主机并没有建立真正的端对端连接，并且不能参与一些因特网协议。一些需要初始化从外部网络建立的TCP连接，和使用无状态协议（比如UDP）的服务将被中断。除非NAT路由器作一些具体的努力，否则送来的数据包将不能到达正确的目的地址。（一些协议有时可以在应用层网关的辅助下，在参与NAT的主机之间容纳一个NAT的实例，比如FTP。）NAT也会使安全协议变的复杂。</span></div>
+<h2><span style="font-size:14px; color:#cc33cc">1.7、NAT技术的局限性</span></h2>
+<div><span style="font-size:12px">（1）NAT违反了IP地址结构模型的设计原则。IP地址结构模型的基础是每个IP地址均标识了一个网络的连接。Internet的软件设计就是建立在这个前提之上，而NAT使得有很多主机可能在使用相同的地址，如10.0.0.1。<br>
+（2）NAT使得IP协议从面向无连接变成面向连接。NAT必须维护专用IP地址与公用IP地址以及端口号的映射关系。在TCP/IP协议体系中，如果一个路由器出现故障，不会影响到TCP协议的执行。因为只要几秒收不到应答，发送进程就会进入超时重传处理。而当存在NAT时，最初设计的TCP/IP协议过程将发生变化，Internet可能变得非常脆弱。<br>
+（3）NAT违反了基本的网络分层结构模型的设计原则。因为在传统的网络分层结构模型中，第N层是不能修改第N&#43;1层的报头内容的。NAT破坏了这种各层独立的原则。<br>
+（4）有些应用是将IP地址插入到正文的内容中，例如标准的FTP协议与IP　Phone协议H.323。如果NAT与这一类协议一起工作，那么NAT协议一定要做适当地修正。同时，网络的传输层也可能使用TCP与UDP协议之外的其他协议，那么NAT协议必须知道并且做相应的修改。由于NAT的存在，使得P2P应用实现出现困难，因为P2P的文件共享与语音共享都是建立在IP协议的基础上的。<br>
+（5）NAT同时存在对高层协议和安全性的影响问题。RFC对NAT存在的问题进行了讨论。NAT的反对者认为这种临时性的缓解IP地址短缺的方案推迟了Ipv6迁移的进程，而并没有解决深层次的问题，他们认为是不可取的。</span></div>
+<h1><span style="font-size:18px; color:#6600cc">2、代理服务器介绍</span></h1>
+<h2><span style="font-size:14px; color:#cc33cc">2.1、概念</span></h2>
+<div><span style="font-size:12px">代理服务器（Proxy Server）是一种重要的服务器安全功能，它的工作主要在开放系统互联(OSI)模型的会话层，从而起到防火墙的作用。代理服务器大多被用来连接INTERNET（国际互联网）和Local Area Network（局域网）。<br>
+</span></div>
+<div><span style="font-size:12px">提供代理服务的电脑系统或其它类型的网络终端称为代理服务器（英文：Proxy Server）。一个完整的代理请求过程为：客户端首先与代理服务器创建连接，接着根据代理服务器所使用的代理协议，请求对目标服务器创建连接、或者获得目标服务器的指定资源（如：文件）。在后一种情况中，代理服务器可能对目标服务器的资源下载至本地缓存，如果客户端所要获取的资源在代理服务器的缓存之中，则代理服务器并不会向目标服务器发送请求，而是直接返回缓存了的资源。一些代理协议允许代理服务器改变客户端的原始请求、目标服务器的原始响应，以满足代理协议的需要。代理服务器的选项和设置在计算机程序中，通常包括一个“防火墙”，允许用户输入代理地址，它会遮盖他们的网络活动，可以允许绕过互联网过滤实现网络访问。</span></div>
+<h2><span style="font-size:14px; color:#cc33cc">2.2、代理服务器功能</span></h2>
+<div><span style="font-size:12px"><strong>主要的功能有：</strong><br>
+（1）、突破自身IP访问限制，访问国外站点。教育网、过去的169网等<br>
+（2）、网络用户可以通过代理访问国外网站。<br>
+（3）、访问一些单位或团体内部资源，如某大学FTP（前提是该代理地址在该资源 的允许访问范围之内），使用教育网内地址段免费代理服务器，就可以用于对教育网开放的各类FTP下载上传，以及各类资料查询共享等服务。<br>
+（4）、突破中国电信的IP封锁：中国电信用户有很多网站是被限制访问的，这种限制是人为的，不同Serve对地址的封锁是不同的。所以不能访问时可以换一个国外的代理服务器试试。<br>
+（5）、提高访问速度：通常代理服务器都设置一个较大的硬盘缓冲区，当有外界的信息通过时，同时也将其保存到缓冲区中，当其他用户再访问相同的信息时， 则直接由缓冲区中取出信息，传给用户，以提高访问速度。<br>
+（6）、隐藏真实IP：上网者也可以通过这种方法隐藏自己的IP，免受攻击。</span></div>
+<div><span style="font-size:12px"><strong>其他功能：</strong></span></div>
+<div><span style="font-size:12px">（1）设置用户验证和记账功能，可按用户进行记账，没有登记的用户无权通过代理服务器访问Internet网。并对用户的访问时间、访问地点、信息流量进行统计。（2）对用户进行分级管理，设置不同用户的访问权限，对外界或内部的Internet地址进行过滤，设置不同的访问权限。<br>
+（3）增加缓冲器（Cache)，提高访问速度，对经常访问的地址创建缓冲区，大大提高热门站点的访问效率。通常代理服务器都设置一个较大的硬盘缓冲区（可能高达几个GB或更大），当有外界的信息通过时，同时也将其保存到缓冲区中，当其他用户再访问相同的信息时，则直接由缓冲区中取出信息，传给用户，以提高访问速度。<br>
+（4）连接内网与Internet，充当防火墙（Firewall）：因为所有内部网的用户通过代理服务器访问外界时，只映射为一个IP地址，所以外界不能直接访问到内部网；同时可以设置IP地址过滤，限制内部网对外部的访问权限。<br>
+（5）节省IP开销：代理服务器允许使用大量的伪IP地址，节约网上资源，即用代理服务器可以减少对IP地址的需求，对于使用局域网方式接入Internet ，如果为局域网（LAN）内的每一个用户都申请一个IP地址，其费用可想而知。但使用代理服务器后，只需代理服务器上有一个合法的IP地址，LAN内其他用户可以使用10.*.*.*这样的私有IP地址，这样可以节约大量的IP，降低网络的维护成本。</span></div>
+<h2><span style="font-size:14px; color:#cc33cc">2.3、代理分类</span></h2>
+<div><strong><span style="font-size:14px">HTTP代理</span></strong><br>
+<span style="font-size:12px">www对于每一个上网的人都再熟悉不过了，www连接请求就是采用的http协议，所以我们在浏览网页，下载数据（也可采用ftp协议）时就是用http代理。它通常绑定在代理服务器的80、3128、8080等端口上。[1]
+</span><br>
+<strong><span style="font-size:14px">socks代理</span></strong><br>
+<span style="font-size:12px">相应的，采用socks协议的代理服务器就是SOCKS服务器，是一种通用的代理服务器。Socks是个电路级的底层网关，是DavidKoblas在1990年开发的，此后就一直作为Internet RFC标准的开放标准。Socks 不要求应用程序遵循特定的操作系统平台，Socks 代理与应用层代理、HTTP层代理不同，Socks 代理只是简单地传递数据包，而不必关心是何种应用协议（比如FTP、HTTP和NNTP请求）。所以，Socks代理比其他应用层代理要快得多。它通常绑定在代理服务器的1080端口上。如果您在企业网或校园网上，需要透过防火墙或通过代理服务器访问
+ Internet就可能需要使用SOCKS。一般情况下，对于拨号上网用户都不需要使用它。注意，浏览网页时常用的代理服务器通常是专门的http代理，它和SOCKS是不同的。因此，您能浏览网页不等于 您一定可以通过SOCKS访问Internet。常用的防火墙，或代理软件都支持SOCKS，但需要其管理员打开这一功能。如果您不确信您是否需要SOCKS或是否有SOCKS可用，请与您的网络管理员联系。为了使用socks，您需要了解一下内容：[1]
+</span><br>
+<span style="font-size:12px">① SOCKS服务器的IP地址</span><br>
+<span style="font-size:12px">② SOCKS服务所在的端口</span><br>
+<span style="font-size:12px">③ 这个SOCKS服务是否需要用户认证？如果需要，您要向您的网络管理员申请一个用户和口令</span><br>
+<span style="font-size:12px">知道了上述信息，您就可以把这些信息填入“网络配置”中，或者在第一次登记时填入，您就可以使用socks代理了。</span><br>
+<span style="font-size:12px">在实际应用中SOCKS代理可以用作为：电子邮件、新闻组软件、网络传呼ICQ、网络聊天MIRC和使用代理服务器上联众打游戏等等各种游戏应用软件当中。</span><br>
+<strong><span style="font-size:14px">VPN代理</span></strong><br>
+<span style="font-size:12px">指在共用网络上建立专用网络的技术。之所以称为虚拟网主要是因为整个VPN网络的任意两个结点之间的连接并没有传统专网建设所需的点到点的物理链路，而是架构在公用网络服务商ISP所提供的网络平台之上的逻辑网络。用户的数据是通过ISP在公共网络（Internet）中建立的逻辑隧道（Tunnel），即点到点的虚拟专线进行传输的。通过相应的加密和认证技术来保证用户内部网络数据在公网上安全传输，从而真正实现网络数据的专有性。</span><br>
+<strong><span style="font-size:14px">反向代理</span></strong><br>
+<span style="font-size:12px">反向代理服务器架设在服务器端，通过缓冲经常被请求的页面来缓解服务器的工作量。 安装反向代理服务器有几个原因:</span><br>
+<span style="font-size:12px">加密和SSL加速、</span><span style="font-size:12px">负载平衡、</span><span style="font-size:12px">缓存静态内容、</span><span style="font-size:12px">压缩 减速上传、</span><span style="font-size:12px">安全 外网发布、</span><span style="font-size:12px">大多使用开放源代代码的squid做反向代理</span><br>
+<strong><span style="font-size:14px">其他类型</span></strong><br>
+<span style="font-size:12px">FTP代理：能够代理客户机上的FTP软件访问FTP服务器</span><br>
+<span style="font-size:12px">RTSP代理：代理客户机上的Realplayer访问Real流媒体服务器</span><br>
+<span style="font-size:12px">POP3代理：代理客户机上的邮件软件用POP3方式收发邮件</span><br>
+</div>
+<div><span style="font-size:12px"><br>
+</span></div>
+<div><span style="font-size:12px"><br>
+</span></div>
+<div><span style="font-size:12px"><br>
+</span></div>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+<!--172.16.140.13-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="74332253" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>0</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+        function btndigga() {
+            $(".tracking-ad[data-mod='popu_222'] a").click();
+        }
+        function btnburya() {
+            $(".tracking-ad[data-mod='popu_223'] a").click();
+        }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='http://blog.csdn.net/WX_East/article/details/74027698';">上一篇</span><a href="http://blog.csdn.net/WX_East/article/details/74027698" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">crond、crontab调研</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='http://blog.csdn.net/WX_East/article/details/74731495';">下一篇</span><a href="http://blog.csdn.net/WX_East/article/details/74731495" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">套接字实现Tcp服务器</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:250px">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/akiqiu/article/details/75098448" title="代理服务器与NAT技术" strategy="BlogCommendFromCsdn_0" target="_blank">代理服务器与NAT技术</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/huiyiCourse/series_detail/54?utm_source=blog7" title="【直播】机器学习&amp;数据挖掘7周实训--韦玮" strategy="undefined" target="_blank">【直播】机器学习&amp;数据挖掘7周实训--韦玮</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/yunlongchn/1305402" title="代理服务器技术 pdf" strategy="BlogCommendFromCsdn_1" target="_blank">代理服务器技术 pdf</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/huiyiCourse/detail/501?utm_source=blog7" title="【直播】大中型UGC信息网站SEO分享--乔向阳" strategy="undefined" target="_blank">【直播】大中型UGC信息网站SEO分享--乔向阳</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/wy1550365215/article/details/77477211" title="浅析NAT技术与代理服务器" strategy="BlogCommendFromCsdn_2" target="_blank">浅析NAT技术与代理服务器</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/huiyiCourse/series_detail/60?utm_source=blog7" title="【直播】打通Linux脉络 进程、线程和调度--宋宝华" strategy="undefined" target="_blank">【直播】打通Linux脉络 进程、线程和调度--宋宝华</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/chenkezai/1286867" title="网络地址转换NAT技术" strategy="BlogCommendFromCsdn_3" target="_blank">网络地址转换NAT技术</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/combo/detail/240?utm_source=blog7" title="【套餐】Java高级程序员专业学习路线--肖海鹏" strategy="undefined" target="_blank">【套餐】Java高级程序员专业学习路线--肖海鹏</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/LX18792732127/article/details/75023108" title="【Linux】中的NAT技术与代理服务器" strategy="BlogCommendFromCsdn_4" target="_blank">【Linux】中的NAT技术与代理服务器</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/course/detail/474?utm_source=blog7" title="【课程】C++语言基础--贺利坚" strategy="undefined" target="_blank">【课程】C++语言基础--贺利坚</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/u012947458/6606307" title="Win 7&amp;XP&amp;2003&amp;Vista下单双网卡实现VPN+NAT代理服务器共享上网的方法" strategy="BlogCommendFromCsdn_5" target="_blank">Win 7&amp;XP&amp;2003&amp;Vista下单双网卡实现VPN+NAT代理服务器共享上网的方法</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/course/detail/5222?utm_source=blog7" title="【课程】深度学习基础与TensorFlow实践--AI100" strategy="undefined" target="_blank">【课程】深度学习基础与TensorFlow实践--AI100</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/LRJ1207/article/details/76342028" title="NAT技术与代理服务器调研" strategy="BlogCommendFromCsdn_6" target="_blank">NAT技术与代理服务器调研</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/cxr36/1025547" title="2009版网络工程师考试大纲" strategy="BlogCommendFromCsdn_7" target="_blank">2009版网络工程师考试大纲</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/weixin_35140291/article/details/75004021" title="NAT技术与代理服务器" strategy="BlogCommendFromCsdn_8" target="_blank">NAT技术与代理服务器</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/ty_0351/774520" title="中国移动移动代理服务器（MAS）系统总体技术要求v1.0.0" strategy="BlogCommendFromCsdn_9" target="_blank">中国移动移动代理服务器（MAS）系统总体技术要求v1.0.0</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+     <div>
+           
+
+       
+                           
+            <!-- 广告位：PC端-博客内容页-banner1-960*90 --> 
+            <script> 
+                (function() { 
+                    var s = "_" + Math.random().toString(36).slice(2); 
+                    document.write('<div id="' + s + '"></div>'); 
+                    (window.slotbydup=window.slotbydup || []).push({ 
+                        id: '4228013', 
+                        container: s, 
+                        size: '0,0', 
+                        display: 'inlay-fix' 
+                    }); 
+                })(); 
+            </script>
+    </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/WX_East/svc/GetSuggestContent/74332253",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+
+            
+                                    
+            
+                                    
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '74332253';
+    var commentscount = 0;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='什么是NAT技术与代理服务器';
+
+</script>
+
+
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/WX_East" target="_blank">
+    <img src="http://avatar.csdn.net/3/6/3/1_wx_east.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/WX_East" class="user_name" target="_blank">WX_East</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=WX_East','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="4" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>17298次</span></li>
+    <li>积分：<span>990</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog3.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：990 </div>
+        </span>  </li>
+    <li>排名：<span>千里之外</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>82篇</span></li>
+    <li>转载：<span>6篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>3条</span></li>
+</ul>
+</ul>
+</div>
+
+
+<div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body" class="form_search">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search csdn-tracking-statistics" target="_blank"  data-mod="popu_306">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字" /></span>
+        <input id="btnSubmit" type="button" value="搜索" title="search in blog" />
+        <input type="hidden" name="q" id="inputQ" />
+        <input type="hidden" name="t" value="blog" />
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+
+   
+    $(function () {
+        $("#btnSubmit").unbind("click");
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {           
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            if ($("#inputSearch").val() == "") {               
+                alert("请录入搜索关键词！");                         
+                return false;
+            }
+            //var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";           
+            var url = "https://www.baidu.com/s?wd=" + encodeURIComponent($("#inputSearch").val()) + "%20site%3Ablog.csdn.net"
+            window.location.href = url;
+        }   
+    });
+</script><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="/WX_East/article/category/6356200" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C</a><span>(12)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6359534" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">课程设计</a><span>(2)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6379789" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C/C++</a><span>(9)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6424765" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">java</a><span>(0)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6435949" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C++</a><span>(22)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6559414" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">数据结构</a><span>(13)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6770252" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Linux</a><span>(20)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6794250" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">剑指offer面试题</a><span>(7)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6886592" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">项目</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6889710" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">leetcode</a><span>(15)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/7013266" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">网络</a><span>(2)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/7013268" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">网络编程</a><span>(5)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/7028828" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">shell</a><span>(1)</span>
+                </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/WX_East/article/month/2017/08">2017年08月</a><span>(4)</span></li><li><a href="/WX_East/article/month/2017/07">2017年07月</a><span>(9)</span></li><li><a href="/WX_East/article/month/2017/06">2017年06月</a><span>(11)</span></li><li><a href="/WX_East/article/month/2017/05">2017年05月</a><span>(11)</span></li><li><a href="/WX_East/article/month/2017/04">2017年04月</a><span>(18)</span></li><li><a href="/WX_East/article/month/2017/03">2017年03月</a><span>(6)</span></li><li><a href="/WX_East/article/month/2017/02">2017年02月</a><span>(5)</span></li><li><a href="/WX_East/article/month/2017/01">2017年01月</a><span>(1)</span></li><li><a href="/WX_East/article/month/2016/12">2016年12月</a><span>(5)</span></li><li><a href="/WX_East/article/month/2016/11">2016年11月</a><span>(3)</span></li><li><a href="/WX_East/article/month/2016/10">2016年10月</a><span>(3)</span></li><li><a href="/WX_East/article/month/2016/09">2016年09月</a><span>(2)</span></li><li><a href="/WX_East/article/month/2016/08">2016年08月</a><span>(11)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls" class="panel tracking-ad" data-mod="popu_340">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/wx_east/article/details/52177378" title="C++ 课设 职工工资管理系统">C++ 课设 职工工资管理系统</a><span>(1375)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52202970" title="排序算法解析">排序算法解析</a><span>(1190)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/70240663" title="进程状态与环境变量的解析">进程状态与环境变量的解析</a><span>(1006)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52180432" title="注释转换   （将C注释转换为C++注释）">注释转换   （将C注释转换为C++注释）</a><span>(666)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52287518" title="C/C++的mem函数和strcpy函数的区别和应用">C/C++的mem函数和strcpy函数的区别和应用</a><span>(640)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/53558048" title="特殊矩阵的压缩存储">特殊矩阵的压缩存储</a><span>(433)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52667845" title="细说   class类中的this指针与 构造函数">细说   class类中的this指针与 构造函数</a><span>(396)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52328966" title="编程中  常见的位运算问题">编程中  常见的位运算问题</a><span>(368)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/53486917" title="迷宫问题求解">迷宫问题求解</a><span>(356)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/73321340" title="使用gdb来调试多线程、多进程">使用gdb来调试多线程、多进程</a><span>(355)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel tracking-ad" data-mod="popu_341">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/wx_east/article/details/52202970" title="排序算法解析">排序算法解析</a><span>(2)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52177378" title="C++ 课设 职工工资管理系统">C++ 课设 职工工资管理系统</a><span>(1)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/77427224" title="模拟实现printf函数">模拟实现printf函数</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52287518" title="C/C++的mem函数和strcpy函数的区别和应用">C/C++的mem函数和strcpy函数的区别和应用</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52275301" title="关于字符串问题的拓展">关于字符串问题的拓展</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52194778" title="注释转换 续  (C++注释转换为C注释)">注释转换 续  (C++注释转换为C注释)</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52180432" title="注释转换   （将C注释转换为C++注释）">注释转换   （将C注释转换为C++注释）</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52179813" title="mem系列函数的实现">mem系列函数的实现</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52168407" title="string 系列函数模拟实现">string 系列函数模拟实现</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52167808" title="动态内存增长的通讯录">动态内存增长的通讯录</a><span>(0)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend">
+<ul>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/77651442" target="_blank">* CSDN日报20170828——《4个方法快速打造你的阅读清单》</a></li>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/77647813" 
+target="_blank">* CSDN博客模板调查问卷</a></li>
+<li><a href="http://blog.csdn.net/bemavery/article/details/77448589"target="_blank">* 秒杀系统的一点思考</a></li>
+<li><a href="http://blog.csdn.net/sweettool/article/details/77018506" 
+target="_blank">* TCP网络通讯如何解决分包粘包问题</a></li>
+<li><a href="http://blog.csdn.net/mindfloating/article/details/77434604" 
+target="_blank">* 技术与技术人员的价值</a></li>
+<li><a href="http://blog.csdn.net/gitchat/article/details/77338211" 
+target="_blank">* GitChat·人工智能 | 除了深度学习，机器翻译还需要啥？
+</a></li>
+
+</ul></ul>
+</div>
+
+
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/wx_east/article/details/52177378#comments">C++ 课设 职工工资管理系统</a>
+    <p style="margin:0px;"><a href="/fengqitide" class="user_name">fengqitide</a>:
+好
+    </p>
+    </li>
+    <li>
+   
+         <a href="/wx_east/article/details/52202970#comments">排序算法解析</a>
+    <p style="margin:0px;"><a href="/WX_East" class="user_name">WX_East</a>:
+@qq_26525215:谢谢
+    </p>
+    </li>
+    <li>
+   
+         <a href="/wx_east/article/details/52202970#comments">排序算法解析</a>
+    <p style="margin:0px;"><a href="/qq_26525215" class="user_name">qq_26525215</a>:
+不错，很详细
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+                 <!-- 广告位开始 --> 
+                <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true" data-mod="ad_popu_189" data-mtp="63" data-order="40" data-con="ad_content_1259" style="width: 250px; height: 500px;">
+                        <div id="nav_show_top_stop" style="width: 250px;height: 500px;z-index:1000"><div id="cpro_u2734133"></div><div id="cpro_u3031286"></div></div>
+                   </div>
+                    <script>
+
+                        setTimeout(function () {
+                            var naviga_offsetTop = 0; function naviga_stay_top() {
+                                var scrollTop = jQuery(document).scrollTop();
+                                if (scrollTop > naviga_offsetTop) {
+                                    jQuery("#nav_show_top_stop").css({ "position": "fixed" });
+                                    jQuery("#nav_show_top_stop").css({ "top": "0px" });
+                                } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); }
+                            }
+                            function onload_function() {
+                                naviga_offsetTop = jQuery("#nav_show_top_stop").position().top;
+                                jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top);
+                                jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top);
+                            } jQuery(document).ready(onload_function);
+                        }, 200);
+
+                    </script>
+                   <script type="text/javascript">
+                       /*PC端-博客内容页左侧Button-250*250，创建于2016-08-15*/
+                       (window.cproArray = window.cproArray || []).push({ id: "u2734133" });
+</script>
+<script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+<script type="text/javascript">
+    (window.cproArray = window.cproArray || []).push({ id: "u3031286" });
+</script>
+<script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+   
+     <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170719001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=5692429"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            //$(".toc a[target='_blank']").attr("target", "");
+
+            setTimeout(function () {
+                $(".toc a[target='_blank']").attr("target", "");
+            }, 500);
+
+        </script>
+
+</body>
+</html>   

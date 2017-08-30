@@ -1,0 +1,1266 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+            <link rel="canonical" href="http://blog.csdn.net/wx_east/article/details/74942410"/> 
+
+   
+
+  
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848"> 
+       
+    <title>TCP协议内部知识介绍 - 晓东的博客
+        - CSDN博客</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="今天我们主要介绍一下TCP协议，关于TCP协议大家听到的都比较多了，我也就不需要详细介绍了，大家向下看就是了。1、TCP基本知识2、调研TCP定时器的使用3、TCP报文格式4、URG、PUSH两者的使用场景，并且两者之间有什么区别？5、TCP“三次握手，四次挥手”为什么TCP连接需要三次握手，为什么不是两次握手、四次握手？" />
+
+    <meta name="keywords" content="TCP" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+       
+       
+        <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/skin-yellow/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/WX_East/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/default.css" />
+ 
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+  
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+     
+        <div class="tracking-ad" data-view="true" data-mod="ad_popu_72"  data-mtp="62" data-order="40" data-con="ad_content_2072" >
+                     <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+                <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	                <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+                <script>  document.getElementById("popuLayer_js_q").onload = function () { var styObjd = styObj = { width: "300px", "height": parseInt(250) + 28 }; window.CSDN.Layer.PopuLayer("#layerd", { storageName: "layerd", styleObj: styObjd, total: 50, expoire: 1000 * 60 }); }</script><!-- 投放代码 --><script type="text/javascript">                    /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({ id: "u2895327" });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+        </div>
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/wx_east">晓东的博客</a></h2>
+            <h3></h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/wx_east?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/wx_east?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/wx_east/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "WX_East";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/wx_east";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://blog.csdn.net/epubit17/article/details/76811996">
+<font color=red><strong>赠书 | 异步2周年,技术图书免费选</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/turingbooks/article/details/77479427">
+<font color=blue><strong>程序员8月书讯</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="https://gitee.com/enterprises?from=csdn-sqbkxq">
+<font color=red><strong>项目管理+代码托管+文档协作，开发更流畅</strong></font></a>
+
+</div>                        </div>
+
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+      var isBole = false; 
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=TCP%e5%8d%8f%e8%ae%ae%e5%86%85%e9%83%a8%e7%9f%a5%e8%af%86%e4%bb%8b%e7%bb%8d&u=http://blog.csdn.net/wx_east/article/details/74942410"
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+    <h1>
+        <span class="link_title"><a href="/wx_east/article/details/74942410">
+        TCP协议内部知识介绍        
+           
+        </a>
+        </span>
+
+         
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/TCP' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">TCP</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2017-07-11 16:17</span>
+            <span class="link_view" title="阅读次数">85人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(0)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('TCP%e5%8d%8f%e8%ae%ae%e5%86%85%e9%83%a8%e7%9f%a5%e8%af%86%e4%bb%8b%e7%bb%8d','74942410');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(74942410,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('7013266','WX_East','top','74942410');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">网络<em>（1）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/WX_East/article/category/7013266"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_7013266">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<p><span style="font-size:14px">今天我们主要介绍一下TCP协议，关于TCP协议大家听到的都比较多了，我也就不需要详细介绍了，大家向下看就是了。</span></p>
+<h1><span style="font-size:18px; color:#6600cc">1、TCP基本知识</span></h1>
+<p><span style="font-size:14px">TCP提供了一种面向连接的、可靠的字节流服务。面向连接比较好理解，就是连接双方在通信前需要预先建立一条连接，这犹如实际生活中的打电话。助于可靠性，TCP协议中涉及了诸多规则来保障通信链路的可靠性，总结起来，主要有以下几点：<br>
+（1）应用数据分割成TCP认为最适合发送的数据块。这部分是通过“MSS”（最大数据包长度）选项来控制的，通常这种机制也被称为一种协商机制，MSS规定了TCP传往另一端的最大数据块的长度。&#20540;得注意的是，MSS只能出现在SYN报文段中，若一方不接收来自另一方的MSS&#20540;，则MSS就定为536字节。一般来讲，在不出现分段的情况下，MSS&#20540;还是越大越好，这样可以提高网络的利用率。<br>
+（2）重传机制。设置定时器，等待确认包。<br>
+（3）对首部和数据进行校验。<br>
+（4）TCP对收到的数据进行排序，然后交给应用层。<br>
+（5）TCP的接收端丢弃重复的数据。<br>
+（6）TCP还提供流量控制。（通过每一端声明的窗口大小来提供的）</span></p>
+<h1><span style="font-size:18px; color:#6600cc">2、调研TCP定时器的使用</span></h1>
+<p><span style="font-size:14px">在TCP协议中有的时候需要定期或者按照某个算法对某个事件进行触发，那么这个时候，TCP协议是使用定时器进行实现的。在TCP中，会有四种定时器：<br>
+</span></p>
+<p><span style="font-size:14px"></span></p>
+<p></p>
+<ul style="list-style:none; margin:10px 10px 10px 30px; padding:0px; color:rgb(51,51,51); font-family:Georgia,&quot;Times New Roman&quot;,Times,sans-serif">
+<li style="padding:0px 0px 0px 15px; list-style-type:disc"><span style="font-size:14px">重传定时器</span></li></ul>
+<ul style="list-style:none; margin:10px 10px 10px 30px; padding:0px; color:rgb(51,51,51); font-family:Georgia,&quot;Times New Roman&quot;,Times,sans-serif">
+<li style="padding:0px 0px 0px 15px; list-style-type:disc"><span style="font-size:14px">坚持定时器</span></li></ul>
+<ul style="list-style:none; margin:10px 10px 10px 30px; padding:0px; color:rgb(51,51,51); font-family:Georgia,&quot;Times New Roman&quot;,Times,sans-serif">
+<li style="padding:0px 0px 0px 15px; list-style-type:disc"><span style="font-size:14px">保活定时器</span></li></ul>
+<ul style="list-style:none; margin:10px 10px 10px 30px; padding:0px; color:rgb(51,51,51); font-family:Georgia,&quot;Times New Roman&quot;,Times,sans-serif">
+<li style="padding:0px 0px 0px 15px; list-style-type:disc"><span style="font-size:14px">2MSL定时器</span></li></ul>
+<span style="color:rgb(51,51,51); font-family:Georgia,&quot;Times New Roman&quot;,Times,sans-serif"><span style="font-size:14px">这四个定时器都有各自的具体作用。</span></span>
+<p></p>
+<p></p>
+<h2></h2>
+<h2 style="font-family:微软雅黑,sans-serif; background-color:rgb(153,153,153); color:rgb(255,255,255); padding:8px 10px; line-height:1.5; margin:10px 0px">
+<span style="font-size:14px">重传定时器</span></h2>
+<p style="line-height:1.8; margin:10px auto; color:rgb(51,51,51); font-family:Georgia,&quot;Times New Roman&quot;,Times,sans-serif">
+<span style="font-weight:normal"><span style="font-size:14px">TCP是可靠的，因此，它对于发出去的信息，没有得到正常ACK反馈的，都会启动一个重传机制。这个重传机制使用一个重传定时器，当发现在规定时间内，没有收到ACK，那么，重新发送消息，如果还没有收到ACK，继续重新发送消息...当然，这每次继续重新发送消息的时间间隔是不一样的。一般默认，第一次重传是发现超时后1s，第二次重传是第一次重传后3s，第三次是6s...</span></span></p>
+<p style="line-height:1.8; margin:10px auto; color:rgb(51,51,51); font-family:Georgia,&quot;Times New Roman&quot;,Times,sans-serif">
+<span style="font-weight:normal"><span style="font-size:14px">说回术语，重传定时器最重要的计算数&#20540;叫RTO(Retransmission Timeout, 重传超时时间)。这个重传超时时间又是根据RTT(Round Trip Time, 连接往返时间)计算出来的。然后呢，这个RTT不是固定设置的，是计算机根据不同的网络情况和机器情况测量出来的。在RFC中，对RTT，RTO的算法有详细的说明。</span></span></p>
+<h2 style="font-family:微软雅黑,sans-serif; background-color:rgb(153,153,153); color:rgb(255,255,255); padding:8px 10px; line-height:1.5; margin:10px 0px">
+<span style="font-size:14px">坚持定时器</span></h2>
+<p style="line-height:1.8; margin:10px auto; color:rgb(51,51,51); font-family:Georgia,&quot;Times New Roman&quot;,Times,sans-serif">
+<span style="font-weight:normal"><span style="font-size:14px">坚持定时器是使用在一方滑动窗口为0之后，另外一方停止传输数据，进入坚持定时器的轮询，直到滑动窗口不再为0了。</span></span></p>
+<p style="line-height:1.8; margin:10px auto; color:rgb(51,51,51); font-family:Georgia,&quot;Times New Roman&quot;,Times,sans-serif">
+<span style="font-weight:normal"><span style="font-size:14px">说说术语，首先是滑动窗口，可以简单理解为缓冲区剩余空间大小。不管是写缓冲还是读缓冲，一旦一方通告了自己的滑动窗口大小，另外一方就会根据滑动窗口大小传递窗口大小的数据了。但是，当被通告，一方的滑动窗口大小为0的时候，另外一方就会启动坚持定时器，基本也是使用TCP指数退避方法，第一次1.5秒，第二次1.5x2秒，第三次1.5x4...</span></span></p>
+<p style="line-height:1.8; margin:10px auto; color:rgb(51,51,51); font-family:Georgia,&quot;Times New Roman&quot;,Times,sans-serif">
+<span style="font-weight:normal"><span style="font-size:14px">其次是糊涂窗口综合症。这个症状是滑动窗口引起的。病因是发送方和接收方在一个很小的滑动窗口的时候就开始数据传输，传输结束之后，读写的消费速度也并没有那么快，导致下次传输的时候，滑动窗口还是那么小。然后现象就是每次传输的数据都非常小。就好比每次开出去的火车载货量只有一节车厢，其实我们是希望能攒够n节车厢才开始传输。</span></span></p>
+<p style="line-height:1.8; margin:10px auto; color:rgb(51,51,51); font-family:Georgia,&quot;Times New Roman&quot;,Times,sans-serif">
+<span style="font-weight:normal"><span style="font-size:14px">糊涂窗口综合症有解决办法，还不止一种，在接收方或者发送方都可以解决。大致就是如果接收方解决，那么接收方在接收窗口小于一定大小的时候，对所有的接收请求都返回窗口为0的包，来触发另外一方的坚持定时器。同样发送方也是，在可以发送的数据大于一定窗口的时候才发送。</span></span></p>
+<h2 style="font-family:微软雅黑,sans-serif; background-color:rgb(153,153,153); color:rgb(255,255,255); padding:8px 10px; line-height:1.5; margin:10px 0px">
+<span style="font-size:14px">保活定时器</span></h2>
+<p style="line-height:1.8; margin:10px auto; color:rgb(51,51,51); font-family:Georgia,&quot;Times New Roman&quot;,Times,sans-serif">
+<span style="font-weight:normal"><span style="font-size:14px">这个就是我们经常说的tcp的keepalive了。实际使用场景是在应用层没有数据进行传输的时候，一定时间（tcp_keepalive_time，默认每2个小时）发送一次保持心跳的包，如果发送成功，则继续保持端口活跃，如果没有正常返回，则在指定次数内（tcp_keepalive_probes，默认是9次），指定间隔（tcp_keepalive_intvl，默认是17s）发送心跳包。如果最后都没有获得正常的ACK，那么才算连接失败。</span></span></p>
+<p style="line-height:1.8; margin:10px auto; color:rgb(51,51,51); font-family:Georgia,&quot;Times New Roman&quot;,Times,sans-serif">
+<span style="font-weight:normal"><span style="font-size:14px">当然，tcp是否需要提供keepalive机制，是有争议的，我们可以为每个tcp连接设置是否启用keepalive和启用keepalive的各个指标设置。参考<a target="_blank" target="_blank" href="http://www.cnblogs.com/yjf512/p/5354055.html" style="outline:none; color:rgb(61,129,238); border-bottom-width:1px; border-bottom-style:dashed">大话keepalive</a></span></span></p>
+<h2 style="font-family:微软雅黑,sans-serif; background-color:rgb(153,153,153); color:rgb(255,255,255); padding:8px 10px; line-height:1.5; margin:10px 0px">
+<span style="font-size:14px">2MSL定时器</span></h2>
+<p style="line-height:1.8; margin:10px auto; color:rgb(51,51,51); font-family:Georgia,&quot;Times New Roman&quot;,Times,sans-serif">
+<span style="font-weight:normal"><span style="font-size:14px">这个定时器用在TCP四次挥手之后，主动发起TCP断开的一方需要保持2MSL的TIME_WAIT的状态。这个保持的一方就会开启2MSL定时器来计算TIME_WAIT的状态保持时间。</span></span></p>
+<h1><span style="font-size:18px; color:#6600cc">3、TCP报文&#26684;式</span></h1>
+<p></p>
+<p><span style="font-size:14px">TCP的报文&#26684;式一般如下</span><span style="font-size:14px">：</span></p>
+<p><span style="font-size:14px"><img src="http://img.blog.csdn.net/20170711114733205?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</span></p>
+<p><span style="font-size:14px">报文首部地址内容介绍：</span></p>
+<p><span style="font-size:14px"><strong>源端口号和目的端口号:</strong>分别占用16位，表示源端口号和目的端口号;用于区别主机中的不同进程， 而IP地址是用来区分不同的主机的，源端口号和目的端口号配合上IP首部中的源IP地址和目的IP地址就能唯一 的确定一个TCP连接;<br>
+<strong>32位的序列号</strong>:用来标识从TCP发端向TCP收端发送的数据字节流，它表示在这个报文段中的的第一个数据 字节在数据流中的序号;主要用来解决网络报乱序的问题;<br>
+<strong>32位确认序列号</strong>：包含发送确认的一端所期望收到的下一个序号，因此，确认序号应 当是上次已成功收到数据字节序号加1。表示的是ACK之前的数据报文我已经受到了。不过，只有当标志位中的ACK标志(下面介绍)为1时该确认序列号的字 段才有效。主要用来解决不丢包的问题;<br>
+<strong>4位首部长度</strong>:表示此报文中首部的长度，基本单位一般是4个字节.这个字段占4位(最多能 表示15个4字节的的字，即4*15=60个字节的首部长度)，因此TCP最多有60字节的首部。然而，没有任选字段， 正常的长度是20字节;</span></p>
+<p><span style="font-size:14px"><strong>保留的六位</strong>：被用作是未来的使用的。<br>
+<strong>6位标志位:</strong>TCP首部中有6个标志比特，它们中的多个可同时被设置为1，主要是用于操控TCP的状态机的，依次 为URG，ACK，PSH，RST，SYN，FIN。每个标志位的意思如下：<br>
+<strong><span style="color:#993399">URG</span></strong>：此标志表示TCP包的紧急指针域有效，用来保证TCP连接不被中断，并且督促 中间层设备要尽快处理这些数据;<br>
+<span style="color:#993399"><strong>ACK</strong></span>：此标志表示应答域有效，就是说前面所说的TCP应答号将会包含在TCP数据包中;有两个取&#20540;：0和1， 为1的时候表示应答域有效，反之为0;<br>
+<span style="color:#993399"><strong>PSH</strong></span>：这个标志位表示Push操作。所谓Push操作就是指在数据包到达接收端以后，立即传送给应用程序， 而不是在缓冲区中排队;<br>
+<span style="color:#993399"><strong>RST</strong></span>：这个标志表示连接复位请求。用来复位那些产生错误的连接，也被用来拒绝错误和非法的数据包;</span></p>
+<p><span style="font-size:14px"><strong><span style="color:#993399">SYN</span></strong>：表示同步序号，用来建立连接。SYN标志位和ACK标志位搭配使用，当连接请求的时候，SYN=1， ACK=0;连接被响应的时候，SYN=1，<span style="white-space:pre"></span><span style="font-family:&quot;Microsoft Yahei&quot;; text-align:justify">ACK=1;这个标志的数据包经常被用来进行端口扫描。扫描者发送
+ 一个只有SYN的数据包，如果对方主机响应了一个数据包回来 ，就表明这台主机存在这个<span style="white-space:pre"></span>端口;但是由于这 种扫描方式只是进行TCP三次握手的第一次握手，因此这种扫描的成功表示被扫描的机器不很安全，一台安全 的主机将会强制要求一个连接<span style="white-space:pre"></span>严&#26684;的进行TCP的三次握手;</span><br>
+<strong><span style="color:#993399">FIN</span></strong>： 表示发送端已经达到数据末尾，也就是说双方的数据传送完成，没有数据可以传送了，发送FIN标志 位的TCP数据包后，连接将被断开。这个标志的数据包也经常被用于进行端口扫描。</span></p>
+<p><span style="font-size:14px"><strong>16位的窗口大小：</strong><span style="font-family:&quot;Microsoft Yahei&quot;; text-align:justify">也就是有名的滑动窗口，用来进行流量控制;一般表示的是本方的窗口的大小。</span></span></p>
+<p><span style="font-family:&quot;Microsoft Yahei&quot;; text-align:justify"><span style="font-size:14px"><strong>16位的校验和：</strong>用来检测首部校验。</span></span></p>
+<p><span style="font-size:14px">通过上面的介绍我们，大致知道了这些TCP报文的地址&#26684;式，相信大家都对此有了一定的了解，但是下面我们还有这么的一个问题要说：</span></p>
+<h1><span style="font-size:18px; color:#6600cc">4、URG、PUSH两者的使用场景，并且两者之间有什么区别？</span></h1>
+<p></p>
+<h4 id="紧急urgurgent" style="margin:0.8em 0px; padding:0px; font-weight:100; line-height:1.3em; font-family:&quot;microsoft yahei&quot;">
+</h4>
+<h4 id="紧急urgurgent" style="color:rgb(63,63,63); font-size:15px; margin:0.8em 0px; padding:0px; font-weight:100; line-height:1.3em; font-family:&quot;microsoft yahei&quot;">
+紧急URG(URGent):<br>
+</h4>
+<blockquote style="color:rgb(63,63,63); font-size:15px; margin:0px 0px 1.1em; padding:15px 20px; font-family:&quot;microsoft yahei&quot;">
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; line-height:1.25">
+当URG = 1时表明紧急指针字段有效，他告诉系统此报文段中有紧急数据，应尽快传送，而不要按原来的排队顺序来传送，发送方的TCP就把紧急数据放到本报文段数据的最前面。URG标志位要与首部中的紧急指针字段配合使用，紧急指针指向数据段中的某个字节，（数据从第一个字节到指针所指的字节就是紧急数据）。&#20540;得注意的是即使<span style="">窗口为0时也可以发送紧急数据，紧急数据不进入接收缓冲区直接交给上层进程。</span></p>
+</blockquote>
+<h4 id="推送pshpush" style="color:rgb(63,63,63); font-size:15px; margin:0.8em 0px; padding:0px; font-weight:100; line-height:1.3em; font-family:&quot;microsoft yahei&quot;">
+<span style="">推送PSH(push):</span></h4>
+<blockquote style="color:rgb(63,63,63); font-size:15px; margin:0px 0px 1.1em; padding:15px 20px; font-family:&quot;microsoft yahei&quot;">
+<p style="margin-top:0px; margin-bottom:0px; padding-top:0px; padding-bottom:0px; line-height:1.25">
+当两个应用进程进行交互式通信时，有时客户发一个请求给服务器时希望立即能够收到对方的响应，这种情况下，客户应用程序通知TCP使用推送（push）操作，TCP就把PSH置为1，并立即创建一个报文段发送过去，类&#20284;的服务器的TCP收到一个设了PSH标志的报文段时就尽快将所有收到的数据立即提交给服务进程，而不在等到整个缓存都填满了再向上交付。</p>
+</blockquote>
+<h4 id="urg和psh的区别" style="color:rgb(63,63,63); font-size:15px; margin:0.8em 0px; padding:0px; font-weight:100; line-height:1.3em; font-family:&quot;microsoft yahei&quot;">
+<span style="">URG和PSH的区别：</span></h4>
+<p style="color:rgb(63,63,63); font-size:15px; margin-top:0px; margin-bottom:1.1em; padding-top:0px; padding-bottom:0px; font-family:&quot;microsoft yahei&quot;">
+<span style="color:red">URG：紧急标志位，表示的是此报文段中有紧急数据，将紧急数据排在普通数据的前面；当接受端收到此报文后后必须先处理紧急数据，而后再处理普通数据。&nbsp;<span style="color:red"><br style="">
+PSH: 催促标志位，当发送端将PSH置为1时，TCP会立即创建一个报文并发送。接受端收到PSH为1的报文后就立即将接受缓冲区内数据向上交付给应用程序，而不是等待缓冲区满后再交付。</span></span></p>
+<h1><span style="font-size:18px; color:#6600cc">5、TCP“三次握手，四次挥手”</span></h1>
+<div style="font-size:14px">我们都知道TCP通信是面向连接的，每次通信都需要经过三次握手与四次挥手来建立与释放连接。</div>
+<div style="font-size:14px">下面的一幅图是合理的介绍了TCP的三次握手与四次挥手的过程：<a target="_blank" target="_blank" href="http://blog.csdn.net/llzk_/article/details/61195812">参考链接</a></div>
+<div style="font-size:14px"><br>
+</div>
+<div style="font-size:14px"><img src="http://img.blog.csdn.net/20170711153249640?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</div>
+<h2 style="font-size:14px"><span style="font-family:&quot;Microsoft Yahei&quot;; font-size:16px; text-align:justify"><span style="color:#cc33cc">【三次握手】</span></span></h2>
+<div style="font-size:14px"><span style="color:rgb(51,51,51); font-family:&quot;Microsoft Yahei&quot;; font-size:16px; text-align:justify">在TCP/IP协议中，TCP 协议提供可靠的连接服务，连接是通过三次握手进行初始化的。<strong>三次握手</strong>的目的是同步连接双方的序列号和确认号 并交换 TCP窗口大小信息。</span></div>
+<div style="font-size:14px">【1】.第一次握手：建立连接。客户端发送连接请求报文段，将SYN位置为1，Seq为x;然后，客户端进入SYN_SENT状态，等待服务器的确认;<br>
+【2】.第二次握手：服务器收到SYN报文段。服务器收到客户端的SYN报文段，需要对这个SYN报文段进行确认，设置Ack为x&#43;1(Seq&#43;1);同时，自己自己还要发送SYN请求信息，将SYN位置为1，Seq为y;服务器端将上述所有信息放到一个报文段(即SYN&#43;ACK报文段)中，一并发送给客户端，此时服务器进入SYN_RCVD状态;<br>
+【3】.第三次握手：客户端收到服务器的SYN&#43;ACK报文段。然后将Ack设置为y&#43;1，向服务器发送ACK报文段，这个报文段发送完毕以后，客户端和服务器端都进入ESTABLISHED状态，完成TCP三次握手。<br>
+完成了三次握手，客户端和服务器端就可以开始传送数据。以上就是TCP三次握手的总体介绍。<br>
+</div>
+<div>
+<p style="color:rgb(51,51,51); font-family:Arial"><span style="font-size:14px">其中的几个状态分别代表：</span></p>
+<p style="color:rgb(51,51,51); font-family:Arial"><span style="font-size:14px">LISTEN - 侦听来自远方TCP端口的连接请求；&nbsp;<br>
+</span></p>
+<p style="color:rgb(51,51,51); font-family:Arial"><span style="font-size:14px">SYN-SENT -在发送连接请求后等待匹配的连接请求；&nbsp;</span></p>
+<p style="color:rgb(51,51,51); font-family:Arial"><span style="font-size:14px">SYN-RCVD - 在收到和发送一个连接请求后等待对连接请求的确认；&nbsp;</span></p>
+<p style="color:rgb(51,51,51); font-family:Arial"><span style="font-size:14px">ESTABLISHED- 代表一个打开的连接，数据可以传送给用户；</span></p>
+<span style="font-size:14px"><span style="color:rgb(51,51,51); font-family:Arial">CLOSED - 没有任何连接状态；</span></span></div>
+<h2 style="font-size:14px"><span style="color:#cc33cc">【四次挥手】</span></h2>
+<div style="font-size:14px">当客户端和服务器通过三次握手建立了TCP连接以后，当数据传送完毕，肯定是要断开TCP连接的啊。那对于TCP的断开连接，这里就有了神秘的“四次分手”。<br>
+【1】.第一次分手：客户端A，设置Seq和Ack，向服务端B发送一个FIN=1报文段;此时，客户端A进入FIN_WAIT_1状态;这表示客户端A没有数据要发送给服务器B了;<br>
+【2】.第二次分手：服务器B收到了客户端A发送的FIN报文段，向客户端A回一个ACK报文段，Ack为Seq加1;客户端A进入FIN_WAIT_2状态;服务器B告诉客户端A，我也没有数据要发送了，可以进行关闭连接了;</div>
+<div style="font-size:14px">【3】.第三次分手：服务器B向客户端A发送FIN报文段，请求关闭连接，同时服务器B进入CLOSE_WAIT状态;<br>
+【4】.第四次分手：客户端A收到服务器B发送的FIN报文段，向服务器B发送ACK报文段，然后进入TIME_WAIT状态;服务器B收到客户端A的ACK报文段以后，就关闭连接;此时，客户端A等待2MSL后依然没有收到回复，则证明Server端已正常关闭，那好，客户端A也可以关闭连接了。<br>
+至此，TCP的四次分手就这么愉快的完成了。</div>
+<h2 style="font-size:14px"><span style="color:#cc33cc">为什么TCP连接需要三次握手，为什么不是两次握手、四次握手？</span></h2>
+<div><span style="font-size:14px">TCP的这样设计都是有原因的：</span></div>
+<div><span style="font-size:14px">假设Tcp进行的两次握手的话：当客户端向服务器请求连接的时候，client给server发送了SYN请求连接报文，server收到SYN报文之后，确定建立连接的话，并且给client回上一个ACK确认报文，自此执行好了两次握手，但是server给client发送的ACK报文在传输的</span></div>
+<div><span style="font-size:14px">过程中可能丢失，此时server认为连接建立，但是client没有收到ACK确认，认为连接没有建立。此时继续连接的时候server认为连接已经建立并，就不会再次建立连接。导致了server中的错误连接会占用的越来越多，产生问题。</span></div>
+<div><span style="font-size:14px">假设Tcp要进行的是四次握手的话：三次就已经可以解决了，四次就浪费了。</span></div>
+<div><br>
+</div>
+<p></p>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+<!--172.16.140.15-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="74942410" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>0</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+        function btndigga() {
+            $(".tracking-ad[data-mod='popu_222'] a").click();
+        }
+        function btnburya() {
+            $(".tracking-ad[data-mod='popu_223'] a").click();
+        }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='http://blog.csdn.net/WX_East/article/details/74928220';">上一篇</span><a href="http://blog.csdn.net/WX_East/article/details/74928220" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">调研套接字server bind 失败的原因？——Address already in use</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='http://blog.csdn.net/WX_East/article/details/75031422';">下一篇</span><a href="http://blog.csdn.net/WX_East/article/details/75031422" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">多路转接之epoll服务器</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:250px">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/WX_East/article/details/74942410" title="TCP协议内部知识介绍" strategy="BlogCommendFromCsdn_0" target="_blank">TCP协议内部知识介绍</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/huiyiCourse/series_detail/54?utm_source=blog7" title="【直播】机器学习&amp;数据挖掘7周实训--韦玮" strategy="undefined" target="_blank">【直播】机器学习&amp;数据挖掘7周实训--韦玮</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/liuc900/1926165" title="windows 内部原理（一）" strategy="BlogCommendFromCsdn_1" target="_blank">windows 内部原理（一）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/huiyiCourse/detail/501?utm_source=blog7" title="【直播】大中型UGC信息网站SEO分享--乔向阳" strategy="undefined" target="_blank">【直播】大中型UGC信息网站SEO分享--乔向阳</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/jhh_move_on/article/details/8143080" title="TCP和UDP协议发送数据包的大小方面的知识介绍" strategy="BlogCommendFromCsdn_2" target="_blank">TCP和UDP协议发送数据包的大小方面的知识介绍</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/huiyiCourse/series_detail/60?utm_source=blog7" title="【直播】打通Linux脉络 进程、线程和调度--宋宝华" strategy="undefined" target="_blank">【直播】打通Linux脉络 进程、线程和调度--宋宝华</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/wuhp113/8995663" title="TCP/IP技术大全（中文PDF非扫描版）" strategy="BlogCommendFromCsdn_3" target="_blank">TCP/IP技术大全（中文PDF非扫描版）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/combo/detail/240?utm_source=blog7" title="【套餐】Java高级程序员专业学习路线--肖海鹏" strategy="undefined" target="_blank">【套餐】Java高级程序员专业学习路线--肖海鹏</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/liaozhongping/article/details/48671565" title="TCP/IP协议详解" strategy="BlogCommendFromCsdn_4" target="_blank">TCP/IP协议详解</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/course/detail/474?utm_source=blog7" title="【课程】C++语言基础--贺利坚" strategy="undefined" target="_blank">【课程】C++语言基础--贺利坚</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/yangchun301/539547" title="CCIE Professional Development:Routing TCP/IP Volume 1 and Volume 2" strategy="BlogCommendFromCsdn_5" target="_blank">CCIE Professional Development:Routing TCP/IP Volume 1 and Volume 2</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/course/detail/5222?utm_source=blog7" title="【课程】深度学习基础与TensorFlow实践--AI100" strategy="undefined" target="_blank">【课程】深度学习基础与TensorFlow实践--AI100</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/chenhongxin/article/details/5997554" title="TCP/IP协议简介" strategy="BlogCommendFromCsdn_6" target="_blank">TCP/IP协议简介</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/yangchun301/311278" title="TCP-IP技术大全" strategy="BlogCommendFromCsdn_7" target="_blank">TCP-IP技术大全</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/duguxiaobiao/article/details/77645686" title="java网络编程+通讯协议的理解" strategy="BlogCommendFromCsdn_8" target="_blank">java网络编程+通讯协议的理解</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/linxinyuan/1781075" title="TCP/IP路由技术（第一卷）（Routing TCP/IP,Volume 1 )" strategy="BlogCommendFromCsdn_9" target="_blank">TCP/IP路由技术（第一卷）（Routing TCP/IP,Volume 1 )</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+     <div>
+           
+
+       
+                           
+            <!-- 广告位：PC端-博客内容页-banner1-960*90 --> 
+            <script> 
+                (function() { 
+                    var s = "_" + Math.random().toString(36).slice(2); 
+                    document.write('<div id="' + s + '"></div>'); 
+                    (window.slotbydup=window.slotbydup || []).push({ 
+                        id: '4228013', 
+                        container: s, 
+                        size: '0,0', 
+                        display: 'inlay-fix' 
+                    }); 
+                })(); 
+            </script>
+    </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/WX_East/svc/GetSuggestContent/74942410",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+
+            
+                                    
+            
+                                    
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '74942410';
+    var commentscount = 0;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='TCP协议内部知识介绍';
+
+</script>
+
+
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/WX_East" target="_blank">
+    <img src="http://avatar.csdn.net/3/6/3/1_wx_east.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/WX_East" class="user_name" target="_blank">WX_East</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=WX_East','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="4" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>17293次</span></li>
+    <li>积分：<span>990</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog3.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：990 </div>
+        </span>  </li>
+    <li>排名：<span>千里之外</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>82篇</span></li>
+    <li>转载：<span>6篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>3条</span></li>
+</ul>
+</ul>
+</div>
+
+
+<div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body" class="form_search">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search csdn-tracking-statistics" target="_blank"  data-mod="popu_306">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字" /></span>
+        <input id="btnSubmit" type="button" value="搜索" title="search in blog" />
+        <input type="hidden" name="q" id="inputQ" />
+        <input type="hidden" name="t" value="blog" />
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+
+   
+    $(function () {
+        $("#btnSubmit").unbind("click");
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {           
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            if ($("#inputSearch").val() == "") {               
+                alert("请录入搜索关键词！");                         
+                return false;
+            }
+            //var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";           
+            var url = "https://www.baidu.com/s?wd=" + encodeURIComponent($("#inputSearch").val()) + "%20site%3Ablog.csdn.net"
+            window.location.href = url;
+        }   
+    });
+</script><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="/WX_East/article/category/6356200" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C</a><span>(12)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6359534" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">课程设计</a><span>(2)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6379789" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C/C++</a><span>(9)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6424765" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">java</a><span>(0)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6435949" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C++</a><span>(22)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6559414" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">数据结构</a><span>(13)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6770252" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Linux</a><span>(20)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6794250" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">剑指offer面试题</a><span>(7)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6886592" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">项目</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6889710" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">leetcode</a><span>(15)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/7013266" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">网络</a><span>(2)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/7013268" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">网络编程</a><span>(5)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/7028828" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">shell</a><span>(1)</span>
+                </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/WX_East/article/month/2017/08">2017年08月</a><span>(4)</span></li><li><a href="/WX_East/article/month/2017/07">2017年07月</a><span>(9)</span></li><li><a href="/WX_East/article/month/2017/06">2017年06月</a><span>(11)</span></li><li><a href="/WX_East/article/month/2017/05">2017年05月</a><span>(11)</span></li><li><a href="/WX_East/article/month/2017/04">2017年04月</a><span>(18)</span></li><li><a href="/WX_East/article/month/2017/03">2017年03月</a><span>(6)</span></li><li><a href="/WX_East/article/month/2017/02">2017年02月</a><span>(5)</span></li><li><a href="/WX_East/article/month/2017/01">2017年01月</a><span>(1)</span></li><li><a href="/WX_East/article/month/2016/12">2016年12月</a><span>(5)</span></li><li><a href="/WX_East/article/month/2016/11">2016年11月</a><span>(3)</span></li><li><a href="/WX_East/article/month/2016/10">2016年10月</a><span>(3)</span></li><li><a href="/WX_East/article/month/2016/09">2016年09月</a><span>(2)</span></li><li><a href="/WX_East/article/month/2016/08">2016年08月</a><span>(11)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls" class="panel tracking-ad" data-mod="popu_340">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/wx_east/article/details/52177378" title="C++ 课设 职工工资管理系统">C++ 课设 职工工资管理系统</a><span>(1375)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52202970" title="排序算法解析">排序算法解析</a><span>(1190)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/70240663" title="进程状态与环境变量的解析">进程状态与环境变量的解析</a><span>(1006)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52180432" title="注释转换   （将C注释转换为C++注释）">注释转换   （将C注释转换为C++注释）</a><span>(666)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52287518" title="C/C++的mem函数和strcpy函数的区别和应用">C/C++的mem函数和strcpy函数的区别和应用</a><span>(640)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/53558048" title="特殊矩阵的压缩存储">特殊矩阵的压缩存储</a><span>(433)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52667845" title="细说   class类中的this指针与 构造函数">细说   class类中的this指针与 构造函数</a><span>(396)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52328966" title="编程中  常见的位运算问题">编程中  常见的位运算问题</a><span>(368)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/53486917" title="迷宫问题求解">迷宫问题求解</a><span>(356)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/73321340" title="使用gdb来调试多线程、多进程">使用gdb来调试多线程、多进程</a><span>(355)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel tracking-ad" data-mod="popu_341">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/wx_east/article/details/52202970" title="排序算法解析">排序算法解析</a><span>(2)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52177378" title="C++ 课设 职工工资管理系统">C++ 课设 职工工资管理系统</a><span>(1)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/77427224" title="模拟实现printf函数">模拟实现printf函数</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52287518" title="C/C++的mem函数和strcpy函数的区别和应用">C/C++的mem函数和strcpy函数的区别和应用</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52275301" title="关于字符串问题的拓展">关于字符串问题的拓展</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52194778" title="注释转换 续  (C++注释转换为C注释)">注释转换 续  (C++注释转换为C注释)</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52180432" title="注释转换   （将C注释转换为C++注释）">注释转换   （将C注释转换为C++注释）</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52179813" title="mem系列函数的实现">mem系列函数的实现</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52168407" title="string 系列函数模拟实现">string 系列函数模拟实现</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52167808" title="动态内存增长的通讯录">动态内存增长的通讯录</a><span>(0)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend">
+<ul>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/77651442" target="_blank">* CSDN日报20170828——《4个方法快速打造你的阅读清单》</a></li>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/77647813" 
+target="_blank">* CSDN博客模板调查问卷</a></li>
+<li><a href="http://blog.csdn.net/bemavery/article/details/77448589"target="_blank">* 秒杀系统的一点思考</a></li>
+<li><a href="http://blog.csdn.net/sweettool/article/details/77018506" 
+target="_blank">* TCP网络通讯如何解决分包粘包问题</a></li>
+<li><a href="http://blog.csdn.net/mindfloating/article/details/77434604" 
+target="_blank">* 技术与技术人员的价值</a></li>
+<li><a href="http://blog.csdn.net/gitchat/article/details/77338211" 
+target="_blank">* GitChat·人工智能 | 除了深度学习，机器翻译还需要啥？
+</a></li>
+
+</ul></ul>
+</div>
+
+
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/wx_east/article/details/52177378#comments">C++ 课设 职工工资管理系统</a>
+    <p style="margin:0px;"><a href="/fengqitide" class="user_name">fengqitide</a>:
+好
+    </p>
+    </li>
+    <li>
+   
+         <a href="/wx_east/article/details/52202970#comments">排序算法解析</a>
+    <p style="margin:0px;"><a href="/WX_East" class="user_name">WX_East</a>:
+@qq_26525215:谢谢
+    </p>
+    </li>
+    <li>
+   
+         <a href="/wx_east/article/details/52202970#comments">排序算法解析</a>
+    <p style="margin:0px;"><a href="/qq_26525215" class="user_name">qq_26525215</a>:
+不错，很详细
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+                 <!-- 广告位开始 --> 
+                <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true" data-mod="ad_popu_189" data-mtp="63" data-order="40" data-con="ad_content_1259" style="width: 250px; height: 500px;">
+                        <div id="nav_show_top_stop" style="width: 250px;height: 500px;z-index:1000"><div id="cpro_u2734133"></div><div id="cpro_u3031286"></div></div>
+                   </div>
+                    <script>
+
+                        setTimeout(function () {
+                            var naviga_offsetTop = 0; function naviga_stay_top() {
+                                var scrollTop = jQuery(document).scrollTop();
+                                if (scrollTop > naviga_offsetTop) {
+                                    jQuery("#nav_show_top_stop").css({ "position": "fixed" });
+                                    jQuery("#nav_show_top_stop").css({ "top": "0px" });
+                                } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); }
+                            }
+                            function onload_function() {
+                                naviga_offsetTop = jQuery("#nav_show_top_stop").position().top;
+                                jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top);
+                                jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top);
+                            } jQuery(document).ready(onload_function);
+                        }, 200);
+
+                    </script>
+                   <script type="text/javascript">
+                       /*PC端-博客内容页左侧Button-250*250，创建于2016-08-15*/
+                       (window.cproArray = window.cproArray || []).push({ id: "u2734133" });
+</script>
+<script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+<script type="text/javascript">
+    (window.cproArray = window.cproArray || []).push({ id: "u3031286" });
+</script>
+<script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+   
+     <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170719001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=5692429"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            //$(".toc a[target='_blank']").attr("target", "");
+
+            setTimeout(function () {
+                $(".toc a[target='_blank']").attr("target", "");
+            }, 500);
+
+        </script>
+
+</body>
+</html>   

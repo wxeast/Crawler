@@ -1,0 +1,1601 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+            <link rel="canonical" href="http://blog.csdn.net/wx_east/article/details/74731495"/> 
+
+   
+
+  
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848"> 
+       
+    <title>套接字实现Tcp服务器 - 晓东的博客
+        - CSDN博客</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="套接字编程又被叫做是socket编程，socket这个词可以表示很多概念: 在TCP/IP协议中,“IP地址+TCP或UDP端口号”唯一标识网络通讯中的一个进程,“IP地址+端口号”就称为socket。在TCP协议中,建立连接的两个进程各自有一个socket来标识,那么这两个socket组成 的socketpair就唯一标识一个连接。socket本身有“插座”的意思,因此用来描述网络连接的网络字节序socket地址的数据类型实现套接字相关函数简单实现简洁版的tcp客户端服务器使用多进程、多线程" />
+
+    <meta name="keywords" content="udp,tcp,服务器" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+       
+       
+        <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/skin-yellow/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/WX_East/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/default.css" />
+ 
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+  
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+     
+        <div class="tracking-ad" data-view="true" data-mod="ad_popu_72"  data-mtp="62" data-order="40" data-con="ad_content_2072" >
+                     <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+                <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	                <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+                <script>  document.getElementById("popuLayer_js_q").onload = function () { var styObjd = styObj = { width: "300px", "height": parseInt(250) + 28 }; window.CSDN.Layer.PopuLayer("#layerd", { storageName: "layerd", styleObj: styObjd, total: 50, expoire: 1000 * 60 }); }</script><!-- 投放代码 --><script type="text/javascript">                    /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({ id: "u2895327" });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+        </div>
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/wx_east">晓东的博客</a></h2>
+            <h3></h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/wx_east?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/wx_east?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/wx_east/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "WX_East";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/wx_east";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://blog.csdn.net/epubit17/article/details/76811996">
+<font color=red><strong>赠书 | 异步2周年,技术图书免费选</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/turingbooks/article/details/77479427">
+<font color=blue><strong>程序员8月书讯</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="https://gitee.com/enterprises?from=csdn-sqbkxq">
+<font color=red><strong>项目管理+代码托管+文档协作，开发更流畅</strong></font></a>
+
+</div>                        </div>
+
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+      var isBole = false; 
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=%e5%a5%97%e6%8e%a5%e5%ad%97%e5%ae%9e%e7%8e%b0Tcp%e6%9c%8d%e5%8a%a1%e5%99%a8&u=http://blog.csdn.net/wx_east/article/details/74731495"
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+    <h1>
+        <span class="link_title"><a href="/wx_east/article/details/74731495">
+        套接字实现Tcp服务器        
+           
+        </a>
+        </span>
+
+         
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/udp' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">udp</a><a href='http://www.csdn.net/tag/tcp' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">tcp</a><a href='http://www.csdn.net/tag/%e6%9c%8d%e5%8a%a1%e5%99%a8' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">服务器</a><a href='http://www.csdn.net/tag/%e5%a5%97%e6%8e%a5%e5%ad%97' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">套接字</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2017-07-08 09:51</span>
+            <span class="link_view" title="阅读次数">108人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(0)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('%e5%a5%97%e6%8e%a5%e5%ad%97%e5%ae%9e%e7%8e%b0Tcp%e6%9c%8d%e5%8a%a1%e5%99%a8','74731495');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(74731495,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('7013268','WX_East','top','74731495');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">网络编程<em>（4）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/WX_East/article/category/7013268"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_7013268">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<span style="font-size:18px; white-space:pre"></span><span style="font-size:14px">套接字编程又被叫做是socket编程，socket这个词可以表示很多概念: 在TCP/IP协议中,“IP地址&#43;TCP或UDP端口号”唯一标识网<br>
+</span>
+<p><span style="font-size:14px">络通讯中的一个进程,“IP地址&#43;端口号”就称为socket。在TCP协议中,建立连接的两个进程各自有一个socket来标识,那么这两个socket组成 的socketpair就唯一标识一个连接。socket本身有“插座”的意思,因此用来描述网络连接的一 对一关系。</span></p>
+<p><span style="font-size:14px"><span style="white-space:pre"></span>今天我们就在讲一下socket吧！</span></p>
+<h1><span style="font-size:18px; color:#6600cc">1、基本知识概念</span></h1>
+<h2><span style="font-size:14px; color:#cc33cc">1.1、网络字节序</span></h2>
+<div><span style="font-size:14px">我们都知道，内存中存储数据有大小端之分，磁盘文件中的多字节数据相对于文件中的偏移地址也有大端小端之分。网络数据流同样有大端小端之分,那么如何定义网络数据流的地址呢?发送主机通常将发送缓冲区中的数据按内存地址从低到高的顺序发出,接收主机把从网络上接到的字节依次保存在接收缓冲区中,也是按内存地址从低到高的顺序保存,因此,网络数据流的地址应这样规定:先发出的数据是低地址,后发出的数据是高地址。<br>
+<strong>TCP/IP协议规定,网络数据流应采用<span style="color:#ff0000">大端字节序</span>,即<span style="color:#ff0000">低地址、高字节（也就是数据的高位存在低地址）</span>。</strong></span></div>
+<div><span style="font-size:14px">为使网络程序具有可移植性,使同样的C代码在大端和小端计算机上编译后都能正常运行,可以调用以下库函数做网络字节序和主机字节序的转换。<br>
+</span></div>
+<div><span style="font-size:14px"><img src="http://img.blog.csdn.net/20170707164405955?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</span></div>
+<div><span style="font-size:14px">这些函数名很好记,h表示host,n表示network,l表示32位长整数,s表示16位短整数。。如果 主机是小端字节序,这些函数将参数做相应的大小端转换然后返回,如果主机是大端字节序,这些函数不做转换,将参数原封不动地返回。<br>
+</span></div>
+<h2><span style="font-size:14px; color:#cc66cc">1.2、socket地址的数据类型</span></h2>
+<div><span style="font-size:14px">socket API是一层抽象的网络编程接口,适用于各种底层网络协议,如IPv4、IPv6,以及后面要讲的UNIX Domain Socket。然而,各种网络协议的地址&#26684;式并不相同,如下图所示:<br>
+</span></div>
+<div><span style="font-size:14px"><img src="http://img.blog.csdn.net/20170710160904261?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</span></div>
+<div><span style="font-size:14px">IPv4和IPv6的地址&#26684;式定义在netinet/in.h中,IPv4地址用sockaddr_in结构体表示,包括16位端口号和32位IP地址,IPv6地址用sockaddr_in6结构体表示,包括16位端口号、128位IP地址和一些 控制字段。</span></div>
+<h2><span style="font-size:14px; color:#cc33cc">1.3、实现套接字相关函数</span></h2>
+<h3><span style="font-size:14px"><span style="color:#33cc00">【socket】创建套接字socket</span></span></h3>
+<div><span style="font-size:14px"></span><pre code_snippet_id="2474528" snippet_file_name="blog_20170708_1_4921820" name="code" class="html">       #include &lt;sys/types.h&gt;          /* See NOTES */
+       #include &lt;sys/socket.h&gt;
+
+       int socket(int domain, int type, int protocol);</pre>参数domain表示的是建立的socket类型，当前的参数包含：</div>
+<div><img src="http://img.blog.csdn.net/20170707170626494?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</div>
+<div><span style="font-size:14px">参数type表示的数据传输，是字节流传输，还是数据报传输，参数选择：</span></div>
+<div><span style="font-size:14px"><img src="http://img.blog.csdn.net/20170710161143307?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</span></div>
+<div><span style="font-size:14px">参数protocol表示创建的方式：在这默认缺省为 &nbsp;0 ；</span></div>
+<h3><span style="font-size:14px"><span style="color:#33cc00">【bind】服务器绑定函数bind</span></span></h3>
+<div><span style="font-size:14px"></span><pre code_snippet_id="2474528" snippet_file_name="blog_20170708_2_6459746" name="code" class="html">       #include &lt;sys/types.h&gt;          /* See NOTES */
+       #include &lt;sys/socket.h&gt;
+
+       int bind(int sockfd, const struct sockaddr *addr,
+                socklen_t addrlen);</pre><span style="font-size:12px">此函数用来绑定服务器端的IP地址与端口号。</span></div>
+<div><span style="font-size:12px">参数sockfd表示的是服务器的套接字——也就是socket函数生成的结果；</span></div>
+<div><span style="font-size:12px">参数addr表示的是socket服务器的地址内容---内部用来写入服务器的ip与端口号；下面是一些对于IP地址操作的函数</span></div>
+<div><span style="font-size:12px"><img src="http://img.blog.csdn.net/20170708091436614?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</span></div>
+<div><span style="font-size:12px">参数addrlen表示的是传入的协议地址的大小；</span></div>
+<h3><span style="font-size:12px; color:#33cc00">【listen】设置套接字为监听状态</span></h3>
+<div><pre code_snippet_id="2474528" snippet_file_name="blog_20170708_3_8237653" name="code" class="html">SYNOPSIS
+       #include &lt;sys/types.h&gt;          /* See NOTES */
+       #include &lt;sys/socket.h&gt;
+
+       int listen(int sockfd, int backlog);</pre>此函数的作用是设置 sockfd套接字为监听状态，用来监听客户端的链接。</div>
+<div>参数sockfd表示的是 要设置的套接字；</div>
+<div>backlog表示的是服务器链接达到最大的数量之后，还可以放到等待队列的链接个数</div>
+<h3><span style="font-size:12px; color:#33cc00">【connect】链接函数一般用于客户端</span></h3>
+<div><pre code_snippet_id="2474528" snippet_file_name="blog_20170708_4_8902744" name="code" class="html">SYNOPSIS
+       #include &lt;sys/types.h&gt;          /* See NOTES */
+       #include &lt;sys/socket.h&gt;
+
+       int connect(int sockfd, const struct sockaddr *addr,
+                   socklen_t addrlen);</pre>此函数可以用于客户端连接到服务器</div>
+<div>参数<strong>sockfd</strong>表示的表示的是要链接到服务器的<strong>客户端套接字；</strong></div>
+<div>参数<strong>addr</strong>表示的是服务器的地址与端口号；</div>
+<div><span style="font-size:14px">参数addrlen表示的是addr的大小一般使用sizeof得到；</span></div>
+<h1><span style="font-size:18px; color:#6600cc">2、简单实现简洁版的tcp客户端服务器</span></h1>
+<div><span style="font-size:14px">实现代码：</span></div>
+<div><span style="font-size:14px">服务器代码实现</span></div>
+<div><span style="font-size:14px"></span><pre code_snippet_id="2474528" snippet_file_name="blog_20170708_5_3155887" name="code" class="html">#include&lt;stdio.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;sys/socket.h&gt;
+#include&lt;sys/types.h&gt;
+#include&lt;string.h&gt;
+#include&lt;netinet/in.h&gt;
+static void  usage()
+{
+	printf(&quot;.....:[ipaddr],[port]\n&quot;);
+	exit(1);
+}
+
+//建立监听套接字
+int startup(char *  argv[])
+{
+	//创建一个socket
+	int sockfd = socket(AF_INET,SOCK_STREAM,0);
+	if(sockfd &lt;0 )
+	{
+		perror(&quot;socket&quot;);
+		exit(2);
+	}
+	//为网络协议地址赋值
+	struct  sockaddr_in addr;
+	addr.sin_family = AF_INET;
+	addr.sin_port =  htons(atoi(argv[2]));
+	addr.sin_addr.s_addr =  inet_addr(argv[1]);
+	//将本地ip 与端口绑定到socket套接字上面
+	if(bind(sockfd,(struct  sockaddr *)&amp;addr,sizeof(addr)) &lt;  0)
+	{
+		perror(&quot;bind&quot;);
+		exit(3);
+	}
+	//设置该套接字为监听套接字 且服务器接受链接达到最大时，可以保存的链接队列为10个
+	if(listen(sockfd,10) &lt;0)
+	{
+		perror(&quot;listen&quot;);
+		exit(4);
+	}
+	return sockfd;
+}
+int main(int argc,char  * argv[])
+{
+	if(argc != 3)
+	{
+		usage();
+	}
+	printf(&quot;server done\n&quot;);
+	//得到监听套接字
+	int sockfd = startup(argv);
+	printf(&quot;%d\n&quot;,sockfd);
+	while(1)
+	{
+		struct sockaddr_in  addr;
+		socklen_t addrlen =sizeof(addr);
+		//使用accept来为服务器来拉链接  addr为输出型参数，保存 链接到的客户端地址
+		int fd  = accept(sockfd,(struct  sockaddr*)&amp;addr,&amp;addrlen);
+		if(fd &lt; 0)
+		{
+			continue;
+		}
+		//到这表示的找到链接 addr得到链接客户端的ip地址与端口号
+		printf(&quot;get connent ip = %s,port = %d\n&quot;,inet_ntoa(addr.sin_addr),ntohs(addr.sin_port));
+		//之后双方通信
+		char buf[1024];
+		while(1)
+		{
+			//服务器先读 后写
+			//fd表示的是收到的客户端描述符
+			int s = read(fd,buf,sizeof(buf)-1);
+			//读到的字符个数为0 表示的是 读到的EOF表示读到文件的结尾
+			if(s== 0)
+			{
+				printf(&quot;client quit\n&quot;);
+				close(fd);
+				break;
+			}
+			else if(s&lt; 0)
+			{
+				perror(&quot;read&quot;);
+				return 5;
+			}
+			else
+			{
+				buf[s] = '\0';
+				printf(&quot;client #: %s\n&quot;,buf);
+				//读完之后将读到的数据再次返回写给客户端
+				write(fd,buf,strlen(buf));
+			}
+		}
+		close(fd);
+	}
+	close(sockfd);
+
+	return 0;
+}</pre>客户端代码：</div>
+<div><span style="font-size:14px"></span><pre code_snippet_id="2474528" snippet_file_name="blog_20170708_6_8521843" name="code" class="html">#include&lt;stdio.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;sys/types.h&gt;
+#include&lt;sys/socket.h&gt;
+#include&lt;string.h&gt;
+#include&lt;netinet/in.h&gt;
+
+static void  usage()
+{
+	printf(&quot;.......:[ipaddr],[port]\n&quot;);
+	exit(1);
+}
+int main(int argc,char * argv[])
+{
+	if(argc != 3)
+	{
+		usage();
+	}
+	//建立套接字
+	int sockfd = socket(AF_INET,SOCK_STREAM,0);
+	if(socket &lt; 0)
+	{
+		perror(&quot;socket&quot;);
+		return  2;
+	}
+	//客户端不需要来绑定ip地址与端口号，因为他是多对一的
+	//设置协议地址 ip地址填服务器ip 端口号填服务器端口号
+	struct sockaddr_in  addr;
+	addr.sin_family =AF_INET;
+	addr.sin_port = htons(atoi(argv[2]));
+	addr.sin_addr.s_addr = inet_addr(argv[1]);
+	//shiyongconnect函数链接到服务器
+	if(connect(sockfd,(struct sockaddr*)&amp;addr,sizeof(addr))&lt;0  )
+	{
+		perror(&quot;connent&quot;);
+		return 3;
+	}
+	//链接成功之后
+	else
+	{
+		printf(&quot;connect  success\n&quot;);
+ 		char  buf[1024];
+ 		while(1)
+   		{
+			//开始通信 服务器是先读后写，那么客户端就是先写后读了
+        	printf(&quot;client #:&quot;);
+          	fflush(stdout);
+			//从标准输入中拿到数据
+           	int s = read(0,buf,sizeof(buf)-1);
+            if(s &lt;=0 )
+            {
+     			 perror(&quot;read&quot;);
+       		     return 4;
+    		}
+     		else
+      		{
+           		buf[s-1] = '\0';
+				//写到sockfd套接字中
+            	write(sockfd,buf,strlen(buf));
+         	}
+			//再从套接字中读取数据
+          	s= read(sockfd,buf,sizeof(buf)-1) ;
+           	if(s== 0)
+            {
+                 printf(&quot;server quit\n&quot;);
+                 break;
+            }
+            else if(s &lt;0){
+      			 perror(&quot;read&quot;);
+        		 return 5;
+     		}
+      		else
+       		{
+           		 buf[s] = '\0';
+             	 printf(&quot;server #:%s\n&quot;,buf);
+          	}
+       	}
+		close(sockfd);
+    }
+     return  0;
+ }</pre>上面的代码只能实现一对一的服务器；我们要实现的服务器一般都是一对多的，下面我们实现多进程、多线程来实现服务器一对多通信。</div>
+<h1><span style="font-size:18px; color:#6600cc">3、使用多进程、多线程实现一对多通信的服务器代码</span></h1>
+<h2><span style="font-size:14px; color:#993399">3.1、使用多进程实现</span></h2>
+<div><span style="font-size:14px"></span><pre code_snippet_id="2474528" snippet_file_name="blog_20170708_7_7027344" name="code" class="html">#include&lt;stdio.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;sys/socket.h&gt;
+#include&lt;sys/types.h&gt;
+#include&lt;string.h&gt;
+#include&lt;netinet/in.h&gt;
+
+//实现多进程服务器
+static void  usage()
+{
+	printf(&quot;.....:[ipaddr],[port]\n&quot;);
+	exit(1);
+}
+//创建监听socket
+int startup(char *  argv[])
+{
+	//创建一个socket
+	int sockfd = socket(AF_INET,SOCK_STREAM,0);
+	if(sockfd &lt;0 )
+	{
+		perror(&quot;socket&quot;);
+		exit(2);
+	}
+	//为网络协议地址赋值
+	struct  sockaddr_in addr;
+	addr.sin_family = AF_INET;
+	addr.sin_port =  htons(atoi(argv[2]));
+	addr.sin_addr.s_addr =  inet_addr(argv[1]);
+	//绑定服务器的IP地址与端口号
+	if(bind(sockfd,(struct  sockaddr *)&amp;addr,sizeof(addr)) &lt;  0)
+	{
+		perror(&quot;bind&quot;);
+		exit(3);
+	}
+	if(listen(sockfd,10) &lt;0)
+	{
+		perror(&quot;listen&quot;);
+		exit(4);
+	}
+	return sockfd;
+}
+int main(int argc,char  * argv[])
+{
+	if(argc != 3)
+	{
+		usage();
+	}
+	printf(&quot;server done\n&quot;);
+	int sockfd = startup(argv);
+	printf(&quot;%d\n&quot;,sockfd);
+	while(1)
+	{
+		struct sockaddr_in  addr;
+		socklen_t addrlen =sizeof(addr);
+		//accecpt来为服务器拉客户端
+		int fd  = accept(sockfd,(struct  sockaddr*)&amp;addr,&amp;addrlen);
+		//accept失败来继续accept；
+		if(fd  &lt; 0)
+		{
+			continue;
+		}
+		//成功之后
+		pid_t  pid = fork();
+		//调用fork来实现多进程
+		if(pid &lt; 0 )
+		{
+			perror(&quot;fork&quot;);
+			return 6;
+		}
+		//父进程在此执行读写
+		else if(pid&gt; 0)
+		{
+			//parent
+			printf(&quot;get connent ip = %s,port = %d\n&quot;,inet_ntoa(addr.sin_addr),ntohs(addr.sin_port));
+			char buf[1024];
+			while(1)
+			{
+				int s = read(fd,buf,sizeof(buf)-1);
+				if(s== 0)
+				{
+					printf(&quot;client quit\n&quot;);
+					close(fd);
+					break;
+				}
+				else if(s&lt; 0)
+				{
+					perror(&quot;read&quot;);
+					return 5;
+				}
+				else
+				{
+					buf[s] = '\0';
+					printf(&quot;client #: %s\n&quot;,buf);
+					write(fd,buf,strlen(buf));
+				}
+			}
+			close(fd);
+			waitpid(pid,NULL,0);
+		}
+		//子进程则继续来来拉客户端 
+		else
+		{
+			continue;
+		}
+	}	
+	close(sockfd);
+	return 0;
+}</pre>
+<h2><span style="font-size:14px; color:#993399">3.2、使用多线程实现</span></h2>
+</div>
+<div><span style="font-size:14px"></span><pre code_snippet_id="2474528" snippet_file_name="blog_20170708_8_8805251" name="code" class="html">#include&lt;stdio.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;sys/socket.h&gt;
+#include&lt;sys/types.h&gt;
+#include&lt;string.h&gt;
+#include&lt;pthread.h&gt;
+#include&lt;netinet/in.h&gt;
+static void  usage()
+{
+	printf(&quot;.....:[ipaddr],[port]\n&quot;);
+	exit(1);
+}
+
+//创建监听socket
+int startup(char *  argv[])
+{
+	//创建一个socket
+	int sockfd = socket(AF_INET,SOCK_STREAM,0);
+	if(sockfd &lt;0 )
+	{
+		perror(&quot;socket&quot;);
+		exit(2);
+	}
+	//为网络协议地址赋值
+	struct  sockaddr_in addr;
+	addr.sin_family = AF_INET;
+	addr.sin_port =  htons(atoi(argv[2]));
+	addr.sin_addr.s_addr =  inet_addr(argv[1]);
+	if(bind(sockfd,(struct  sockaddr *)&amp;addr,sizeof(addr)) &lt;  0)
+	{
+		perror(&quot;bind&quot;);
+		exit(3);
+	}
+	if(listen(sockfd,10) &lt;0)
+	{
+		perror(&quot;listen&quot;);
+		exit(4);
+	}
+	return sockfd;
+}
+//为每个线程来执行一个客户端的读写
+void  * handler(void  * arg)
+{
+	int fd = (int)arg;
+	char buf[1024];
+	while(1)
+	{
+		int s = read(fd,buf,sizeof(buf)-1);
+		if(s== 0)
+		{
+			printf(&quot;client quit\n&quot;);
+			close(fd);
+			break;
+		}
+		else if(s&lt; 0)
+		{
+			perror(&quot;read&quot;);
+			return 5;
+		}
+		else
+		{
+			buf[s] = '\0';
+			printf(&quot;client #: %s\n&quot;,buf);
+			write(fd,buf,strlen(buf));
+		}
+	}
+	close(fd);
+	return NULL;
+}
+int main(int argc,char  * argv[])
+{
+	if(argc != 3)
+	{
+		usage();
+	}
+	printf(&quot;server done\n&quot;);
+	int sockfd = startup(argv);
+	printf(&quot;%d\n&quot;,sockfd);
+	while(1)
+	{
+		struct sockaddr_in  addr;
+		socklen_t addrlen =sizeof(addr);
+		//服务器accept来接受客户端发的链接
+		int fd  = accept(sockfd,(struct  sockaddr*)&amp;addr,&amp;addrlen);
+		if(fd &lt;  0)
+		{
+			continue;
+		}
+		//成功之后 创建新的线程来 执行与此客户端的读写操作。
+		printf(&quot;get connent ip = %s,port = %d\n&quot;,inet_ntoa(addr.sin_addr),ntohs(addr.sin_port));
+		pthread_t  td;
+		pthread_create(&amp;td,NULL,handler,(void *)fd) ;
+		//并且设置线程状态为 分离状态 这样主线程则不需要来等待分离线程，直接继续进行循环
+		pthread_detach(td);
+	}
+
+	
+	close(sockfd);
+
+	return 0;
+}</pre>
+<h1><span style="font-size:18px; color:#6600cc">4、TCP协议通讯流程</span></h1>
+</div>
+<div><span style="font-size:14px">基于TCP协议的网络程序<br>
+下图是基于TCP协议的客户端/服务器程序的一般流程:</span></div>
+<div><span style="font-size:14px"><img src="http://img.blog.csdn.net/20170708095439602?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+服务器调用socket()、bind()、listen() 完成初始化后,调用accept()阻塞等待,处于监听端口的状态,客户端调用socket()初始化后,调用connect()发出SYN段并阻塞等待服务器应答,服务器应答⼀一个SYN-ACK段,客户端收到后从connect()返回,同时应答一个ACK段,服务器收到后 从accept()返回。<br>
+数据传输的过程: 建立连接后,TCP协议提供全双工的通信服务,但是一般的客户端/服务器程序的流程是由客户端主 动发起请求,服务器被动处理请求,一问一答的方式。因此,服务器从accept()返回后立刻调 用read(),读socket就像读管道一样,如果没有数据到达就阻塞等待,这时客户端调用write()发送 请求给服务器,服务器收到后从read()返回,对客户端的请求进行处理,在此期间客户端调 用read()阻塞等待服务器的应答,服务器调用write()将处理结果发回给客户端,再次调用read()阻塞 等待下一条请求,客户端收到后从read()返回,发送下一条请求,如此循环下去。<br>
+</span></div>
+<div><span style="font-size:14px"><br>
+</span></div>
+<div><span style="font-size:14px"><br>
+</span></div>
+<div><br>
+</div>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+<!--172.16.140.13-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="74731495" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>0</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+        function btndigga() {
+            $(".tracking-ad[data-mod='popu_222'] a").click();
+        }
+        function btnburya() {
+            $(".tracking-ad[data-mod='popu_223'] a").click();
+        }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='http://blog.csdn.net/WX_East/article/details/74332253';">上一篇</span><a href="http://blog.csdn.net/WX_East/article/details/74332253" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">什么是NAT技术与代理服务器</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='http://blog.csdn.net/WX_East/article/details/74784121';">下一篇</span><a href="http://blog.csdn.net/WX_East/article/details/74784121" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">套接字实现Udp服务器</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:250px">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/sinat_36184075/article/details/76794655" title="《Unix网络编程》卷1：套接字联网API(第3版)：基本TCP编程、TCP客户端/服务器程序、I/O复用" strategy="BlogCommendFromCsdn_0" target="_blank">《Unix网络编程》卷1：套接字联网API(第3版)：基本TCP编程、TCP客户端/服务器程序、I/O复用</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/huiyiCourse/series_detail/54?utm_source=blog7" title="【直播】机器学习&amp;数据挖掘7周实训--韦玮" strategy="undefined" target="_blank">【直播】机器学习&amp;数据挖掘7周实训--韦玮</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/yzp857888144/8794141" title="TCP和UDP套接字_简单的客户/服务器" strategy="BlogCommendFromCsdn_1" target="_blank">TCP和UDP套接字_简单的客户/服务器</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/huiyiCourse/detail/501?utm_source=blog7" title="【直播】大中型UGC信息网站SEO分享--乔向阳" strategy="undefined" target="_blank">【直播】大中型UGC信息网站SEO分享--乔向阳</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/xiaobai1593/article/details/6969950" title="C#  实现基本的套接字TCP通信" strategy="BlogCommendFromCsdn_2" target="_blank">C#  实现基本的套接字TCP通信</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/huiyiCourse/series_detail/60?utm_source=blog7" title="【直播】打通Linux脉络 进程、线程和调度--宋宝华" strategy="undefined" target="_blank">【直播】打通Linux脉络 进程、线程和调度--宋宝华</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/KKSamoyed/2809512" title="UNIX网络编程卷1套接字联网API.part2.rar" strategy="BlogCommendFromCsdn_3" target="_blank">UNIX网络编程卷1套接字联网API.part2.rar</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/combo/detail/240?utm_source=blog7" title="【套餐】Java高级程序员专业学习路线--肖海鹏" strategy="undefined" target="_blank">【套餐】Java高级程序员专业学习路线--肖海鹏</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/u011321908/article/details/43457393" title="Unix 网络编程(四)- 典型TCP客服服务器程序开发实例及基本套接字API介绍" strategy="BlogCommendFromCsdn_4" target="_blank">Unix 网络编程(四)- 典型TCP客服服务器程序开发实例及基本套接字API介绍</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/course/detail/474?utm_source=blog7" title="【课程】C++语言基础--贺利坚" strategy="undefined" target="_blank">【课程】C++语言基础--贺利坚</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/jcr8745dqy7/2142509" title="用TCP/IP进行网际互联 第三卷：客户 - 服务器编程与应用（Linux/POSIX套接字版）" strategy="BlogCommendFromCsdn_5" target="_blank">用TCP/IP进行网际互联 第三卷：客户 - 服务器编程与应用（Linux/POSIX套接字版）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/course/detail/5222?utm_source=blog7" title="【课程】深度学习基础与TensorFlow实践--AI100" strategy="undefined" target="_blank">【课程】深度学习基础与TensorFlow实践--AI100</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/shenwanjiang111/article/details/42525369" title="UNIX网络变成-套接字联网之TCP客户/服务器程序学习" strategy="BlogCommendFromCsdn_6" target="_blank">UNIX网络变成-套接字联网之TCP客户/服务器程序学习</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/u011142128/5694003" title="基于TCP的聊天室（包含客户端与服务器端）" strategy="BlogCommendFromCsdn_7" target="_blank">基于TCP的聊天室（包含客户端与服务器端）</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/darkxiaoming/article/details/69666589" title="基于TCP/IP的套接字服务器端和客户端编程" strategy="BlogCommendFromCsdn_8" target="_blank">基于TCP/IP的套接字服务器端和客户端编程</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/yxxwgs/5993555" title="精通Windows Sockets网络开发----基于Visual C++实现.pdf" strategy="BlogCommendFromCsdn_9" target="_blank">精通Windows Sockets网络开发----基于Visual C++实现.pdf</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+     <div>
+           
+
+       
+                           
+            <!-- 广告位：PC端-博客内容页-banner1-960*90 --> 
+            <script> 
+                (function() { 
+                    var s = "_" + Math.random().toString(36).slice(2); 
+                    document.write('<div id="' + s + '"></div>'); 
+                    (window.slotbydup=window.slotbydup || []).push({ 
+                        id: '4228013', 
+                        container: s, 
+                        size: '0,0', 
+                        display: 'inlay-fix' 
+                    }); 
+                })(); 
+            </script>
+    </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/WX_East/svc/GetSuggestContent/74731495",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+
+            
+                                    
+            
+                                    
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '74731495';
+    var commentscount = 0;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='套接字实现Tcp服务器';
+
+</script>
+
+
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/WX_East" target="_blank">
+    <img src="http://avatar.csdn.net/3/6/3/1_wx_east.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/WX_East" class="user_name" target="_blank">WX_East</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=WX_East','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="4" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>17287次</span></li>
+    <li>积分：<span>990</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog3.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：990 </div>
+        </span>  </li>
+    <li>排名：<span>千里之外</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>82篇</span></li>
+    <li>转载：<span>6篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>3条</span></li>
+</ul>
+</ul>
+</div>
+
+
+<div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body" class="form_search">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search csdn-tracking-statistics" target="_blank"  data-mod="popu_306">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字" /></span>
+        <input id="btnSubmit" type="button" value="搜索" title="search in blog" />
+        <input type="hidden" name="q" id="inputQ" />
+        <input type="hidden" name="t" value="blog" />
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+
+   
+    $(function () {
+        $("#btnSubmit").unbind("click");
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {           
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            if ($("#inputSearch").val() == "") {               
+                alert("请录入搜索关键词！");                         
+                return false;
+            }
+            //var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";           
+            var url = "https://www.baidu.com/s?wd=" + encodeURIComponent($("#inputSearch").val()) + "%20site%3Ablog.csdn.net"
+            window.location.href = url;
+        }   
+    });
+</script><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="/WX_East/article/category/6356200" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C</a><span>(12)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6359534" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">课程设计</a><span>(2)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6379789" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C/C++</a><span>(9)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6424765" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">java</a><span>(0)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6435949" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C++</a><span>(22)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6559414" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">数据结构</a><span>(13)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6770252" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Linux</a><span>(20)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6794250" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">剑指offer面试题</a><span>(7)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6886592" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">项目</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6889710" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">leetcode</a><span>(15)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/7013266" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">网络</a><span>(2)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/7013268" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">网络编程</a><span>(5)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/7028828" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">shell</a><span>(1)</span>
+                </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/WX_East/article/month/2017/08">2017年08月</a><span>(4)</span></li><li><a href="/WX_East/article/month/2017/07">2017年07月</a><span>(9)</span></li><li><a href="/WX_East/article/month/2017/06">2017年06月</a><span>(11)</span></li><li><a href="/WX_East/article/month/2017/05">2017年05月</a><span>(11)</span></li><li><a href="/WX_East/article/month/2017/04">2017年04月</a><span>(18)</span></li><li><a href="/WX_East/article/month/2017/03">2017年03月</a><span>(6)</span></li><li><a href="/WX_East/article/month/2017/02">2017年02月</a><span>(5)</span></li><li><a href="/WX_East/article/month/2017/01">2017年01月</a><span>(1)</span></li><li><a href="/WX_East/article/month/2016/12">2016年12月</a><span>(5)</span></li><li><a href="/WX_East/article/month/2016/11">2016年11月</a><span>(3)</span></li><li><a href="/WX_East/article/month/2016/10">2016年10月</a><span>(3)</span></li><li><a href="/WX_East/article/month/2016/09">2016年09月</a><span>(2)</span></li><li><a href="/WX_East/article/month/2016/08">2016年08月</a><span>(11)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls" class="panel tracking-ad" data-mod="popu_340">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/wx_east/article/details/52177378" title="C++ 课设 职工工资管理系统">C++ 课设 职工工资管理系统</a><span>(1375)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52202970" title="排序算法解析">排序算法解析</a><span>(1190)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/70240663" title="进程状态与环境变量的解析">进程状态与环境变量的解析</a><span>(1006)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52180432" title="注释转换   （将C注释转换为C++注释）">注释转换   （将C注释转换为C++注释）</a><span>(666)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52287518" title="C/C++的mem函数和strcpy函数的区别和应用">C/C++的mem函数和strcpy函数的区别和应用</a><span>(640)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/53558048" title="特殊矩阵的压缩存储">特殊矩阵的压缩存储</a><span>(433)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52667845" title="细说   class类中的this指针与 构造函数">细说   class类中的this指针与 构造函数</a><span>(396)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52328966" title="编程中  常见的位运算问题">编程中  常见的位运算问题</a><span>(368)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/53486917" title="迷宫问题求解">迷宫问题求解</a><span>(356)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/73321340" title="使用gdb来调试多线程、多进程">使用gdb来调试多线程、多进程</a><span>(355)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel tracking-ad" data-mod="popu_341">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/wx_east/article/details/52202970" title="排序算法解析">排序算法解析</a><span>(2)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52177378" title="C++ 课设 职工工资管理系统">C++ 课设 职工工资管理系统</a><span>(1)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/77427224" title="模拟实现printf函数">模拟实现printf函数</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52287518" title="C/C++的mem函数和strcpy函数的区别和应用">C/C++的mem函数和strcpy函数的区别和应用</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52275301" title="关于字符串问题的拓展">关于字符串问题的拓展</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52194778" title="注释转换 续  (C++注释转换为C注释)">注释转换 续  (C++注释转换为C注释)</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52180432" title="注释转换   （将C注释转换为C++注释）">注释转换   （将C注释转换为C++注释）</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52179813" title="mem系列函数的实现">mem系列函数的实现</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52168407" title="string 系列函数模拟实现">string 系列函数模拟实现</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52167808" title="动态内存增长的通讯录">动态内存增长的通讯录</a><span>(0)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend">
+<ul>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/77651442" target="_blank">* CSDN日报20170828——《4个方法快速打造你的阅读清单》</a></li>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/77647813" 
+target="_blank">* CSDN博客模板调查问卷</a></li>
+<li><a href="http://blog.csdn.net/bemavery/article/details/77448589"target="_blank">* 秒杀系统的一点思考</a></li>
+<li><a href="http://blog.csdn.net/sweettool/article/details/77018506" 
+target="_blank">* TCP网络通讯如何解决分包粘包问题</a></li>
+<li><a href="http://blog.csdn.net/mindfloating/article/details/77434604" 
+target="_blank">* 技术与技术人员的价值</a></li>
+<li><a href="http://blog.csdn.net/gitchat/article/details/77338211" 
+target="_blank">* GitChat·人工智能 | 除了深度学习，机器翻译还需要啥？
+</a></li>
+
+</ul></ul>
+</div>
+
+
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/wx_east/article/details/52177378#comments">C++ 课设 职工工资管理系统</a>
+    <p style="margin:0px;"><a href="/fengqitide" class="user_name">fengqitide</a>:
+好
+    </p>
+    </li>
+    <li>
+   
+         <a href="/wx_east/article/details/52202970#comments">排序算法解析</a>
+    <p style="margin:0px;"><a href="/WX_East" class="user_name">WX_East</a>:
+@qq_26525215:谢谢
+    </p>
+    </li>
+    <li>
+   
+         <a href="/wx_east/article/details/52202970#comments">排序算法解析</a>
+    <p style="margin:0px;"><a href="/qq_26525215" class="user_name">qq_26525215</a>:
+不错，很详细
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+                 <!-- 广告位开始 --> 
+                <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true" data-mod="ad_popu_189" data-mtp="63" data-order="40" data-con="ad_content_1259" style="width: 250px; height: 500px;">
+                        <div id="nav_show_top_stop" style="width: 250px;height: 500px;z-index:1000"><div id="cpro_u2734133"></div><div id="cpro_u3031286"></div></div>
+                   </div>
+                    <script>
+
+                        setTimeout(function () {
+                            var naviga_offsetTop = 0; function naviga_stay_top() {
+                                var scrollTop = jQuery(document).scrollTop();
+                                if (scrollTop > naviga_offsetTop) {
+                                    jQuery("#nav_show_top_stop").css({ "position": "fixed" });
+                                    jQuery("#nav_show_top_stop").css({ "top": "0px" });
+                                } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); }
+                            }
+                            function onload_function() {
+                                naviga_offsetTop = jQuery("#nav_show_top_stop").position().top;
+                                jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top);
+                                jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top);
+                            } jQuery(document).ready(onload_function);
+                        }, 200);
+
+                    </script>
+                   <script type="text/javascript">
+                       /*PC端-博客内容页左侧Button-250*250，创建于2016-08-15*/
+                       (window.cproArray = window.cproArray || []).push({ id: "u2734133" });
+</script>
+<script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+<script type="text/javascript">
+    (window.cproArray = window.cproArray || []).push({ id: "u3031286" });
+</script>
+<script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+   
+     <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170719001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=5692429"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            //$(".toc a[target='_blank']").attr("target", "");
+
+            setTimeout(function () {
+                $(".toc a[target='_blank']").attr("target", "");
+            }, 500);
+
+        </script>
+
+</body>
+</html>   

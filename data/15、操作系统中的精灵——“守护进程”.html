@@ -1,0 +1,1339 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+            <link rel="canonical" href="http://blog.csdn.net/wx_east/article/details/73874160"/> 
+
+   
+
+  
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848"> 
+       
+    <title>操作系统中的精灵——“守护进程” - 晓东的博客
+        - CSDN博客</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="守护进程1、【进程组】、【作业】、【会话】基本概念2、【进程组】、【作业】的区别3、终端终端的基本概念终端的登录过程线路规程 4、守护进程守护进程的特点setsid函数、chdir函数调用setsid函数成功的结果：怎么自己实现一个守护进程系统调用接口daemon为什么创建守护进程时有人fork两次？" />
+
+    <meta name="keywords" content="守护进程,进程组,作业" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+       
+       
+        <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/skin-yellow/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/WX_East/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/default.css" />
+ 
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+  
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+     
+        <div class="tracking-ad" data-view="true" data-mod="ad_popu_72"  data-mtp="62" data-order="40" data-con="ad_content_2072" >
+                     <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+                <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	                <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+                <script>  document.getElementById("popuLayer_js_q").onload = function () { var styObjd = styObj = { width: "300px", "height": parseInt(250) + 28 }; window.CSDN.Layer.PopuLayer("#layerd", { storageName: "layerd", styleObj: styObjd, total: 50, expoire: 1000 * 60 }); }</script><!-- 投放代码 --><script type="text/javascript">                    /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({ id: "u2895327" });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+        </div>
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/wx_east">晓东的博客</a></h2>
+            <h3></h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/wx_east?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/wx_east?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/wx_east/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "WX_East";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/wx_east";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://blog.csdn.net/epubit17/article/details/76811996">
+<font color=red><strong>赠书 | 异步2周年,技术图书免费选</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/turingbooks/article/details/77479427">
+<font color=blue><strong>程序员8月书讯</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="https://gitee.com/enterprises?from=csdn-sqbkxq">
+<font color=red><strong>项目管理+代码托管+文档协作，开发更流畅</strong></font></a>
+
+</div>                        </div>
+
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+      var isBole = false; 
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f%e4%b8%ad%e7%9a%84%e7%b2%be%e7%81%b5%e2%80%94%e2%80%94%e2%80%9c%e5%ae%88%e6%8a%a4%e8%bf%9b%e7%a8%8b%e2%80%9d&u=http://blog.csdn.net/wx_east/article/details/73874160"
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+    <h1>
+        <span class="link_title"><a href="/wx_east/article/details/73874160">
+        操作系统中的精灵——“守护进程”        
+           
+        </a>
+        </span>
+
+         
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/%e5%ae%88%e6%8a%a4%e8%bf%9b%e7%a8%8b' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">守护进程</a><a href='http://www.csdn.net/tag/%e8%bf%9b%e7%a8%8b%e7%bb%84' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">进程组</a><a href='http://www.csdn.net/tag/%e4%bd%9c%e4%b8%9a' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">作业</a><a href='http://www.csdn.net/tag/%e4%bc%9a%e8%af%9d' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">会话</a><a href='http://www.csdn.net/tag/%e7%bb%88%e7%ab%af' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">终端</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2017-06-29 16:59</span>
+            <span class="link_view" title="阅读次数">138人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(0)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f%e4%b8%ad%e7%9a%84%e7%b2%be%e7%81%b5%e2%80%94%e2%80%94%e2%80%9c%e5%ae%88%e6%8a%a4%e8%bf%9b%e7%a8%8b%e2%80%9d','73874160');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(73874160,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('6770252','WX_East','top','73874160');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">Linux<em>（19）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/WX_East/article/category/6770252"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_6770252">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<p><span style="white-space:pre"><span style="font-size:14px">守护进程也称精灵进程（Daemon），是运行在后台的一种特殊进程。它独立于控制终端并且周期性地执行某种任</span></span></p>
+<p><span style="font-size:14px"><span style="white-space:pre">务</span><span style="white-space:pre">或等待处理某些发生的事件。守护进程是一种很有用的进程。</span></span></p>
+<p><span style="white-space:pre"><span style="font-size:14px"><span style="white-space:pre"></span>Linux的大多数服务器就是用守护进程实现的。</span></span></p>
+<p><span style="white-space:pre"><span style="font-size:14px"><span style="white-space:pre"></span>比如，Internet服务器inetd，Web服务器httpd等。</span></span></p>
+<p><span style="white-space:pre"><span style="font-size:14px"><span style="white-space:pre"></span>同时，守护进程完成许多系统任务。比如，作业规划进程crond等。</span></span></p>
+<p><span style="white-space:pre"><span style="font-size:14px">在了解守护进程之前我们需要先知道下面的一些概念知识：</span></span></p>
+<h1><span style="white-space:pre"><span style="font-size:18px; color:#6600cc">1、【进程组】、【作业】、【会话】基本概念</span></span></h1>
+<div>
+<h2><span style="font-size:14px; color:#cc33cc">进程组</span></h2>
+<span style="white-space:pre"><span style="font-size:12px; color:#333333">每个进程除了有一个进程ID之外，还属于一个进程组。进程组是一个或多个进程的集合。</span></span></div>
+<div><span style="white-space:pre"><span style="font-size:12px; color:#333333">通常，它们与同一作业相关联，可以接收来自同一终端的各种信号。每个进程组有一个唯一的进程组ID。</span></span></div>
+<div><span style="font-size:12px; color:#333333"><span style="white-space:pre">每个进程组都可以有一个组长进程。</span><span style="white-space:pre">组长进程的标识是，其进程组ID等于</span><span style="white-space:pre">其进程ID。</span></span></div>
+<div>组长进程可以创建⼀一个进程组，创建该组中的进程，然后终止。只要在某个进程组中一个<br>
+进程存在，则该进程组就存在，这与其组长进程是否终止无关。<span style="color:#6600cc"><span style="font-size:18px"><br>
+</span></span>
+<h2><span style="white-space:pre"><span style="font-size:14px; color:#cc33cc">作业</span></span></h2>
+</div>
+<div>Shell分前后台来控制的不是进程而是作业（Job）或者进程组（Process Group）。一个前台作业可以由多个进程组成，一个后台也可以由多个进程组成，</div>
+<div>Shell可以运行一个前台作业和任意多个后台作业，这称为作业控制。</div>
+<div><span style="color:#ff0000"><strong>进程组与作业之间可以大致理解成是一样的，之后我们也不区分它们，但是他们是有区别的！！！下面我们会提到他们的区别。</strong></span></div>
+<div><strong><span style="font-size:14px; color:#cc33cc">会话</span></strong></div>
+<div>简单来说的话，会话是一个或者是多个进程组的集合。</div>
+<div>一个会话可以有一个控制终端。这通常是登陆到其上的终端设备（在终端登陆情况下）或伪终端设备（在网络登陆情况下）。</div>
+<div>建立与控制终端连接的会话首进程被称为控制进程。</div>
+<div>一个会话中的几个进程组可被分为一个前台进程组以及一个或多个后台进程组。所以一个会话中，应该包括控制进程（会话首进程），一个前台进程组和任意后台进程组。<br>
+</div>
+<div><pre code_snippet_id="2464557" snippet_file_name="blog_20170629_1_6469345" name="code" class="html">1 $ proc1 | proc2 &amp;
+2 $ proc3 | proc4 | proc5</pre>其中proc1与proc2属于同一个后台作业，proc3，proc4和proc5属于同一个前台作业，<br>
+bash本身属于一个单独的作业。这些作业的控制终端相同，它们同属于一个会话，当用户在控制终端输入特殊的控制键（如Ctrl&#43;C，产生SIGINT,Ctrk&#43;\,产生IGQUIT,Ctrl&#43;Z,产生SIGTSTP），内核发送相应的信号给前台作业中的所有进程。</div>
+<h1><span style="font-size:18px; color:#6600cc">2、【进程组】、【作业】的区别</span></h1>
+<div>作业与进程组的区别：</div>
+<div>如果作业中的某个进程又创建了子进程，则子进程不属于作业。但是它属于进程组<br>
+一旦作业运行结束，Shell就把bash提到前台，如果原来的前台进程还存在（如果这个子进程还没终止），它自动变为后台进程组。</div>
+<div>我们都知道 shell管理的是作业，我们现在写一份代码，要是当前的作业中的进程创建子进程，但是父进程退出，我们来观察子进程 &nbsp;</div>
+<div><pre code_snippet_id="2464557" snippet_file_name="blog_20170629_2_5672957" name="code" class="html">#include&lt;stdio.h&gt;
+#include&lt;unistd.h&gt;
+
+//configure  procgroup and  jobs
+int main()
+{
+	if(fork()  &gt;0 )
+	{
+		printf(&quot;parent :%d \n&quot;,getpid());
+		sleep(1);
+		exit(0);//父进程sleep 1秒之后  退出 
+	}
+	else
+	{
+		while(1)//子进程无限循环
+		{
+			printf(&quot;child :%d \n&quot;,getpid());
+			sleep(2);
+		}
+	}
+	return  0;
+}
+</pre>现在我们来看看这个运行结果吧：</div>
+<div><img src="http://img.blog.csdn.net/20170629151515983?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""></div>
+<div>现在我们应该能够知道进程组 、与作业之间又有什么样的区别 了吧！！<br>
+要是之后带大家也遇到了这种情况的话，在这里我来向大家介绍一个命令，可以来防止后台进程向前台打消息。。。</div>
+<div><pre code_snippet_id="2464557" snippet_file_name="blog_20170629_3_9402711" name="code" class="html">stty tostop</pre>使用了这种情况之后，再也不会有这种情况发生了。。。。</div>
+<h1><span style="font-size:18px; color:#6600cc">3、终端</span></h1>
+<h2><span style="font-size:14px; color:#cc33cc">终端的基本概念</span></h2>
+<div>在UNIX系统中,用户通过终端登录系统后得到一个Shell进程,这个终端成为Shell进程的控制终端 (Controlling Terminal),控制终端是保存在PCB中的信息,而我们知 道fork会复制PCB中的息,因此由Shell进程启动的其它进程的控制终端也是这个终端。默认情况 下(没有重定向),每个进程的标准输入、标准输出和标准错误输出都指向控制终端,进程从标准 输入读也就是读用户的键盘输入,进程往标准输出或标准错误输出写也就是输出到显示器上。此外 在控制终端输入一些特殊的控制键可以给前台进程发信号,例如Ctrl-C表
+ 示SIGINT,Ctrl-\表示SIGQUIT。</div>
+<div>每个进程都可以通过一个特殊的设备文件/dev/tty访问它的控制终 端。事实上每个终端设备都对应一个不同的设备文件,/dev/tty提供了一个通用的接口,一个进程 要访问它的控制终端既可以通过/dev/tty也可以通过该终端设备所对应的设备文件来访 问。ttyname函数可以由文件描述符查出对应的文件名,该文件描述符必须指向一个终端设备而不 能是任意文件。</div>
+<div>下面我们通过实验看一下各种不同的终端所对应的设备文件名。</div>
+<div><img src="http://img.blog.csdn.net/20170629153723784?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</div>
+<div><br>
+</div>
+<div>在Linux下，有着一切皆文件的说法，所以只要打开一个终端，在路径/dev/pts之下就会创建这么一个字符型文件。。。</div>
+<div>另外要想实现两个终端之间的交流我们只需要将输出重定向到对应的终端文件中就可以实现终端之间的通信了。。。</div>
+<div><img src="http://img.blog.csdn.net/20170629154836964?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</div>
+<div>使用echo输出一段话，并输出重定向到2号终端。对应的2号终端就会受到输出的字符</div>
+<div><img src="http://img.blog.csdn.net/20170629155020541?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</div>
+<h2><span style="color:rgb(204,51,204); font-size:14px"><strong>终端的登录过程</strong></span></h2>
+<div>现在我们来看终端登录的过程:<br>
+1、系统启动时,<strong>init进程</strong>根据配置文件/etc/inittab确定需要打开哪些终端。例如配置文件中有这样一行:<br>
+1:2345:respawn:/sbin/getty 9600 tty1和/etc/passwd类&#20284;,每个字段用:号隔开。</div>
+<div>开头的1是这一行配置的id,通常要和tty的后缀一致,配置tty2的那一行id就应该是2。</div>
+<div>第二个字段2345表示运行级别2~5都执行这个配置。</div>
+<div>最后一个字段/sbin/getty 9600 tty1是init进程要fork/exec的命令,打开终端/dev/tty1,波特率 是9600(波特率只对串口和Modem终端有意义),然后提示用户输入帐号。</div>
+<div>中间的respawn字，表示输入错误，我们从终端退出登录后会再次提示输入帐号。<br>
+有些新的Linux发行版已经不⽤用/etc/inittab这个配置⽂文件了,例如Ubuntu用/etc/event.d⽬目录下的配置文件来配置init。</div>
+<div>2、getty根据命令行参数打开终端设备作为它的控制终端,把文件描述符0、1、2都指向控制终 端,然后提示用户输入帐号。用户输入帐号之后,getty的任务就完成了,它再执行login程序:<br>
+execle(&quot;/bin/login&quot;, &quot;login&quot;, &quot;-p&quot;, username, NULL, envp);</div>
+<div>3、login程序提示用户输入密码(输入密码期间关闭终端的回显),然后验证帐号密码的正确性。 如果密码不正确,login进程终止,init会重新fork/exec一个getty进程。如果密码正确,login程 序设置一些环境变量,设置当前工作目录为该⽤用户的主目录,然后执行Shell:<br>
+execl(&quot;/bin/bash&quot;, &quot;-bash&quot;, NULL);<br>
+</div>
+<div>注意argv[0]参数的程序名前面加了一个-,这样bash就知道自己是作为登录Shell启动的,执行登录Shell的启动脚本。</div>
+<div>从getty开始exec到login,再exec到bash,其实都是同一个进程,因此控制终 端没变,文件描述符0、1、2也仍然指向控制终端。由于fork会复制PCB信息,所以由Shell启动的 其它进程也都是如此。</div>
+<h2><span style="font-size:14px; color:#cc33cc">线路规程&nbsp;</span></h2>
+<div>内核中处理终端设备的模块包括硬件驱动程序和线路规程(Line Discipline)。<br>
+硬件驱动程序负责读写实际的硬件设备,比如从键盘读入字符和把字符输出到显示器,线路规程像 一个过滤器,对于某些特殊字符并不是让它直接通过,而是做特殊处理,比如在键盘上按下Ctrl- Z,Ctr -C对应的字符并不会被用户程序的read读到,而是被线路规程截获,解释成SIGTSTP以及SIGINT信号发给前台进程,通常会使该进程停止。线路规程应该过滤哪些字符和做哪些特殊处理是可以配置的。</div>
+<div>用户从键盘输入字符的过程图如下图所示 ：</div>
+<div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<img src="http://img.blog.csdn.net/20170629160615695?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</div>
+<div><br>
+</div>
+<h1><span style="font-size:18px; color:#6633ff">4、守护进程</span></h1>
+<div>Linux系统启动时会启动很多系统服务进程,这些系统服 务进程没有控制终端,不能直接和用户交互。其它进程都是在用户登录或运行程序时创建,在运行结束或用户注销时终止,但系统服务进程不受用户登录注销的影响,它们一直在运行着。这种进程有一个名称叫守护进程(Daemon)。</div>
+<h2><span style="font-size:14px; color:#cc33cc">守护进程的特点</span></h2>
+<div>（1）、集成24小时运行 ；</div>
+<div>（2）、不受用户登录、注销的影响；</div>
+<div>（3）、一般守护进程是以d结尾；</div>
+<div>（4）、自成一个会话；</div>
+<div>（5）、自称进程组；</div>
+<div>（6）、话首进程是孤儿进程 ；</div>
+<h2><span style="font-size:14px; color:#cc33cc">守护进程的创建过程&nbsp;</span></h2>
+<div>1、设置umask&#20540;为0(有的守护进程一般会创建日志文件)</div>
+<div>2、调用fork函数，父进程退出；</div>
+<div>3、子进程调用setsid函数；</div>
+<div>4、更改进程的工作目录是 根目录(防止不小心删除当前文件夹，导致守护进程访问文件时出现错误)</div>
+<div>5、关闭文件描述符；</div>
+<div>6、忽略SIGCHLD信号 。</div>
+<h2><span style="font-size:14px"><span style="color:#cc33cc">setsid函数、chdir函数</span></span></h2>
+<div>大家都看到了上面的守护进程的创建过程，都看到了上面的第三部调用setsid函数，但这个函数有什么用呢？？、调了它有什么样的结果呢？？</div>
+<div>创建守护进程最关键的⼀一步是调用setsid函数创建⼀一个新的Session,并成为Session Leader。<br>
+</div>
+<h3>&nbsp;调用setsid函数成功的结果：</h3>
+<div>1、当前进程成为话首进程；</div>
+<div>2、当前进程成为进程组的组长；</div>
+<div>3、与当前的终端脱关联。</div>
+<div>注意,调用这个函数之前,当前进程不允许是进程组的Leader,否则该函数返回-1。要保证当前进程不是进 程组的Leader也很容易,只要先fork再调用setsid就行了。fork创建的子进程和父进程在同一个进 程组中,进程组的Leader必然是该组的第一个进程,所以子进程不可能是该组的第一个进程,在子 进程中调用setsid就不会有问题了。</div>
+<h3>chdir函数</h3>
+<div><pre code_snippet_id="2464557" snippet_file_name="blog_20170629_4_4212261" name="code" class="html">       #include &lt;unistd.h&gt;
+<span style="white-space:pre">	</span>//修改当前进程的工作目录
+       int chdir(const char *path);//path表示要设置的路径<img src="http://img.blog.csdn.net/20170629165142870?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="" /></pre></div>
+<h2><span style="color:rgb(204,51,204)"><span style="font-size:14px">怎么自己实现一个守护进程</span></span></h2>
+<div><span style="font-size:14px; color:#cc33cc">实现代码：</span></div>
+<div><pre code_snippet_id="2464557" snippet_file_name="blog_20170629_5_5433760" name="code" class="html">#include&lt;stdio.h&gt;
+#include&lt;unistd.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;signal.h&gt;
+void mydaemon()
+{
+	//修改umask值
+	umask(0);
+	pid_t  pid;
+	//fork创建子进程
+	if(pid = fork()&gt; 0)
+	{
+		//父进程
+		exit(0);
+	}
+	//子进程调用函数 setsid
+	setsid();
+	//修改用户工作目录为根目录 
+	chdir(&quot;/&quot;);
+	//关闭文件描述符
+	close(0);
+	close(1);
+	close(2);
+	//忽略SIGCHLD信号
+	signal(SIGCHLD,SIG_IGN);
+}
+int main()
+{
+	mydaemon();
+	while(1);
+	return  0;
+}
+</pre><br>
+实现结果：</div>
+<div><img src="http://img.blog.csdn.net/20170629163939427?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</div>
+<h2><span style="font-size:14px; color:#cc33cc">系统调用接口daemon</span></h2>
+<div>上面是我们自己实现的一个守护进程，但是操作系统为我们提供了这么一个进口可以直接创建一个守护进程</div>
+<div><pre code_snippet_id="2464557" snippet_file_name="blog_20170629_6_8607106" name="code" class="html">       #include &lt;unistd.h&gt;
+
+       int daemon(int nochdir, int noclose);//两个参数表示的是否要修改进程的工作目录，以及是否关闭文件描述符   0表示修改、关闭
+</pre><br>
+函数测试：</div>
+<div><img src="http://img.blog.csdn.net/20170629164444924?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</div>
+<div>测试结果：</div>
+<div><img src="http://img.blog.csdn.net/20170629165142870?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</div>
+<div><br>
+</div>
+<div>测试成功，要是想不跟进程的工作目录，不关闭文件描述符</div>
+<div>可以调用函数&nbsp;</div>
+<div><pre code_snippet_id="2464557" snippet_file_name="blog_20170629_7_4845115" name="code" class="html">daemon(1,1);</pre></div>
+<h2><span style="font-family:&quot;Helvetica Neue&quot;,Helvetica,Arial,sans-serif"><span style="font-size:14px; color:#cc33cc">为什么创建守护进程时有人fork两次？&nbsp;</span></span></h2>
+<div>
+<div><span style="font-family:KaiTi_GB2312"><span style="font-size:12px">（1）调用一次fork的作用：</span></span></div>
+<div><span style="font-family:KaiTi_GB2312"><span style="font-size:12px">&nbsp; &nbsp; 第一次fork的作用是让shell认为这条命令已经终止，不用挂在终端输入上，还有就是为了后面的setsid服务，因为调用setsid函数的进程不能是进程组组长，如果不fork出子进程，则此时的父进程是进程组组长，就无法调用setsid。当子进程调用完setsid函数之后，子进程是会话组长也是进程组组长，并且脱离了控制终端，此时，不管控制终端如何操作，新的进程都不会收到一些信号使得进程退出。</span></span></div>
+<div><span style="font-family:KaiTi_GB2312"><span style="font-size:12px">（2）第二次fork的作用：</span></span></div>
+<div>
+<div style="font-family:Arial"><span style="color:rgb(255,0,0)"><span style="font-family:KaiTi_GB2312"><span style="font-size:12px">虽然当前关闭了和终端的联系，但是后期可能会误操作打开了终端。</span></span></span></div>
+<div style="font-family:Arial"><span style="font-size:12px"><span style="color:rgb(255,0,0)"><span style="font-family:KaiTi_GB2312">只有会话首进程能打开终端设备，</span></span><span style="font-family:KaiTi_GB2312"><span style="color:rgb(255,0,0)">也就是再fork一次，再把父进程退出，再次fork的子进程作为守护进程继续运行，保证了该精灵进程不是对话期的首进程，</span></span></span></div>
+<div style="font-family:Arial"><span style="font-family:KaiTi_GB2312"><span style="font-size:12px">第二次不是必须的，是可选的，市面上有些开源项目也是fork一次</span></span></div>
+</div>
+<div><span style="font-family:KaiTi_GB2312; font-size:18px"><br>
+</span></div>
+<br>
+</div>
+<div><br>
+</div>
+<div><br>
+</div>
+<div><br>
+</div>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+<!--172.16.140.12-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="73874160" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>0</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+        function btndigga() {
+            $(".tracking-ad[data-mod='popu_222'] a").click();
+        }
+        function btnburya() {
+            $(".tracking-ad[data-mod='popu_223'] a").click();
+        }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='http://blog.csdn.net/WX_East/article/details/73740731';">上一篇</span><a href="http://blog.csdn.net/WX_East/article/details/73740731" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">我眼中的“信号”</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='http://blog.csdn.net/WX_East/article/details/74002268';">下一篇</span><a href="http://blog.csdn.net/WX_East/article/details/74002268" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">线程安全与可重入函数之间的区别</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:250px">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/peace_power/article/details/9210447" title="Linux程序、进程管理" strategy="BlogCommendFromCsdn_0" target="_blank">Linux程序、进程管理</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/huiyiCourse/series_detail/54?utm_source=blog7" title="【直播】机器学习&amp;数据挖掘7周实训--韦玮" strategy="undefined" target="_blank">【直播】机器学习&amp;数据挖掘7周实训--韦玮</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/zsj2102/9915176" title="Android 通过JNI实现双守护进程，保证服务不被杀死 源码" strategy="BlogCommendFromCsdn_1" target="_blank">Android 通过JNI实现双守护进程，保证服务不被杀死 源码</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/huiyiCourse/detail/501?utm_source=blog7" title="【直播】大中型UGC信息网站SEO分享--乔向阳" strategy="undefined" target="_blank">【直播】大中型UGC信息网站SEO分享--乔向阳</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/WX_East/article/details/73874160" title="操作系统中的精灵——“守护进程”" strategy="BlogCommendFromCsdn_2" target="_blank">操作系统中的精灵——“守护进程”</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/huiyiCourse/series_detail/60?utm_source=blog7" title="【直播】打通Linux脉络 进程、线程和调度--宋宝华" strategy="undefined" target="_blank">【直播】打通Linux脉络 进程、线程和调度--宋宝华</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/u011337461/9449044" title="android守护进程" strategy="BlogCommendFromCsdn_3" target="_blank">android守护进程</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/combo/detail/240?utm_source=blog7" title="【套餐】Java高级程序员专业学习路线--肖海鹏" strategy="undefined" target="_blank">【套餐】Java高级程序员专业学习路线--肖海鹏</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/changqiang08/article/details/7706675" title="中嵌之进程控制" strategy="BlogCommendFromCsdn_4" target="_blank">中嵌之进程控制</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/course/detail/474?utm_source=blog7" title="【课程】C++语言基础--贺利坚" strategy="undefined" target="_blank">【课程】C++语言基础--贺利坚</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/huangyanshuo/8979085" title="adroidstudio 配置守护进程" strategy="BlogCommendFromCsdn_5" target="_blank">adroidstudio 配置守护进程</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/course/detail/5222?utm_source=blog7" title="【课程】深度学习基础与TensorFlow实践--AI100" strategy="undefined" target="_blank">【课程】深度学习基础与TensorFlow实践--AI100</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/HeatDeath/article/details/76691601" title="Python 基础 —— Twisted介绍" strategy="BlogCommendFromCsdn_6" target="_blank">Python 基础 —— Twisted介绍</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/u013506600/6894089" title="windows守护进程模版代码" strategy="BlogCommendFromCsdn_7" target="_blank">windows守护进程模版代码</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/sinat_36101354/article/details/74997117" title="守护进程" strategy="BlogCommendFromCsdn_8" target="_blank">守护进程</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/richardli1228/9528570" title="AIDL伪守护进程demo" strategy="BlogCommendFromCsdn_9" target="_blank">AIDL伪守护进程demo</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+     <div>
+           
+
+       
+                           
+            <!-- 广告位：PC端-博客内容页-banner1-960*90 --> 
+            <script> 
+                (function() { 
+                    var s = "_" + Math.random().toString(36).slice(2); 
+                    document.write('<div id="' + s + '"></div>'); 
+                    (window.slotbydup=window.slotbydup || []).push({ 
+                        id: '4228013', 
+                        container: s, 
+                        size: '0,0', 
+                        display: 'inlay-fix' 
+                    }); 
+                })(); 
+            </script>
+    </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/WX_East/svc/GetSuggestContent/73874160",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+
+            
+                                    
+            
+                                    
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '73874160';
+    var commentscount = 0;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='操作系统中的精灵——“守护进程”';
+
+</script>
+
+
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/WX_East" target="_blank">
+    <img src="http://avatar.csdn.net/3/6/3/1_wx_east.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/WX_East" class="user_name" target="_blank">WX_East</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=WX_East','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="4" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>17301次</span></li>
+    <li>积分：<span>991</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog3.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：991 </div>
+        </span>  </li>
+    <li>排名：<span>千里之外</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>82篇</span></li>
+    <li>转载：<span>6篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>3条</span></li>
+</ul>
+</ul>
+</div>
+
+
+<div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body" class="form_search">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search csdn-tracking-statistics" target="_blank"  data-mod="popu_306">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字" /></span>
+        <input id="btnSubmit" type="button" value="搜索" title="search in blog" />
+        <input type="hidden" name="q" id="inputQ" />
+        <input type="hidden" name="t" value="blog" />
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+
+   
+    $(function () {
+        $("#btnSubmit").unbind("click");
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {           
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            if ($("#inputSearch").val() == "") {               
+                alert("请录入搜索关键词！");                         
+                return false;
+            }
+            //var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";           
+            var url = "https://www.baidu.com/s?wd=" + encodeURIComponent($("#inputSearch").val()) + "%20site%3Ablog.csdn.net"
+            window.location.href = url;
+        }   
+    });
+</script><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="/WX_East/article/category/6356200" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C</a><span>(12)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6359534" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">课程设计</a><span>(2)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6379789" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C/C++</a><span>(9)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6424765" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">java</a><span>(0)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6435949" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C++</a><span>(22)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6559414" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">数据结构</a><span>(13)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6770252" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Linux</a><span>(20)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6794250" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">剑指offer面试题</a><span>(7)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6886592" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">项目</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6889710" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">leetcode</a><span>(15)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/7013266" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">网络</a><span>(2)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/7013268" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">网络编程</a><span>(5)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/7028828" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">shell</a><span>(1)</span>
+                </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/WX_East/article/month/2017/08">2017年08月</a><span>(4)</span></li><li><a href="/WX_East/article/month/2017/07">2017年07月</a><span>(9)</span></li><li><a href="/WX_East/article/month/2017/06">2017年06月</a><span>(11)</span></li><li><a href="/WX_East/article/month/2017/05">2017年05月</a><span>(11)</span></li><li><a href="/WX_East/article/month/2017/04">2017年04月</a><span>(18)</span></li><li><a href="/WX_East/article/month/2017/03">2017年03月</a><span>(6)</span></li><li><a href="/WX_East/article/month/2017/02">2017年02月</a><span>(5)</span></li><li><a href="/WX_East/article/month/2017/01">2017年01月</a><span>(1)</span></li><li><a href="/WX_East/article/month/2016/12">2016年12月</a><span>(5)</span></li><li><a href="/WX_East/article/month/2016/11">2016年11月</a><span>(3)</span></li><li><a href="/WX_East/article/month/2016/10">2016年10月</a><span>(3)</span></li><li><a href="/WX_East/article/month/2016/09">2016年09月</a><span>(2)</span></li><li><a href="/WX_East/article/month/2016/08">2016年08月</a><span>(11)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls" class="panel tracking-ad" data-mod="popu_340">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/wx_east/article/details/52177378" title="C++ 课设 职工工资管理系统">C++ 课设 职工工资管理系统</a><span>(1375)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52202970" title="排序算法解析">排序算法解析</a><span>(1190)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/70240663" title="进程状态与环境变量的解析">进程状态与环境变量的解析</a><span>(1006)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52180432" title="注释转换   （将C注释转换为C++注释）">注释转换   （将C注释转换为C++注释）</a><span>(666)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52287518" title="C/C++的mem函数和strcpy函数的区别和应用">C/C++的mem函数和strcpy函数的区别和应用</a><span>(640)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/53558048" title="特殊矩阵的压缩存储">特殊矩阵的压缩存储</a><span>(433)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52667845" title="细说   class类中的this指针与 构造函数">细说   class类中的this指针与 构造函数</a><span>(396)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52328966" title="编程中  常见的位运算问题">编程中  常见的位运算问题</a><span>(368)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/53486917" title="迷宫问题求解">迷宫问题求解</a><span>(356)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/73321340" title="使用gdb来调试多线程、多进程">使用gdb来调试多线程、多进程</a><span>(355)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel tracking-ad" data-mod="popu_341">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/wx_east/article/details/52202970" title="排序算法解析">排序算法解析</a><span>(2)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52177378" title="C++ 课设 职工工资管理系统">C++ 课设 职工工资管理系统</a><span>(1)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/77427224" title="模拟实现printf函数">模拟实现printf函数</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52287518" title="C/C++的mem函数和strcpy函数的区别和应用">C/C++的mem函数和strcpy函数的区别和应用</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52275301" title="关于字符串问题的拓展">关于字符串问题的拓展</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52194778" title="注释转换 续  (C++注释转换为C注释)">注释转换 续  (C++注释转换为C注释)</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52180432" title="注释转换   （将C注释转换为C++注释）">注释转换   （将C注释转换为C++注释）</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52179813" title="mem系列函数的实现">mem系列函数的实现</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52168407" title="string 系列函数模拟实现">string 系列函数模拟实现</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52167808" title="动态内存增长的通讯录">动态内存增长的通讯录</a><span>(0)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend">
+<ul>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/77651442" target="_blank">* CSDN日报20170828——《4个方法快速打造你的阅读清单》</a></li>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/77647813" 
+target="_blank">* CSDN博客模板调查问卷</a></li>
+<li><a href="http://blog.csdn.net/bemavery/article/details/77448589"target="_blank">* 秒杀系统的一点思考</a></li>
+<li><a href="http://blog.csdn.net/sweettool/article/details/77018506" 
+target="_blank">* TCP网络通讯如何解决分包粘包问题</a></li>
+<li><a href="http://blog.csdn.net/mindfloating/article/details/77434604" 
+target="_blank">* 技术与技术人员的价值</a></li>
+<li><a href="http://blog.csdn.net/gitchat/article/details/77338211" 
+target="_blank">* GitChat·人工智能 | 除了深度学习，机器翻译还需要啥？
+</a></li>
+
+</ul></ul>
+</div>
+
+
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/wx_east/article/details/52177378#comments">C++ 课设 职工工资管理系统</a>
+    <p style="margin:0px;"><a href="/fengqitide" class="user_name">fengqitide</a>:
+好
+    </p>
+    </li>
+    <li>
+   
+         <a href="/wx_east/article/details/52202970#comments">排序算法解析</a>
+    <p style="margin:0px;"><a href="/WX_East" class="user_name">WX_East</a>:
+@qq_26525215:谢谢
+    </p>
+    </li>
+    <li>
+   
+         <a href="/wx_east/article/details/52202970#comments">排序算法解析</a>
+    <p style="margin:0px;"><a href="/qq_26525215" class="user_name">qq_26525215</a>:
+不错，很详细
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+                 <!-- 广告位开始 --> 
+                <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true" data-mod="ad_popu_189" data-mtp="63" data-order="40" data-con="ad_content_1259" style="width: 250px; height: 500px;">
+                        <div id="nav_show_top_stop" style="width: 250px;height: 500px;z-index:1000"><div id="cpro_u2734133"></div><div id="cpro_u3031286"></div></div>
+                   </div>
+                    <script>
+
+                        setTimeout(function () {
+                            var naviga_offsetTop = 0; function naviga_stay_top() {
+                                var scrollTop = jQuery(document).scrollTop();
+                                if (scrollTop > naviga_offsetTop) {
+                                    jQuery("#nav_show_top_stop").css({ "position": "fixed" });
+                                    jQuery("#nav_show_top_stop").css({ "top": "0px" });
+                                } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); }
+                            }
+                            function onload_function() {
+                                naviga_offsetTop = jQuery("#nav_show_top_stop").position().top;
+                                jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top);
+                                jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top);
+                            } jQuery(document).ready(onload_function);
+                        }, 200);
+
+                    </script>
+                   <script type="text/javascript">
+                       /*PC端-博客内容页左侧Button-250*250，创建于2016-08-15*/
+                       (window.cproArray = window.cproArray || []).push({ id: "u2734133" });
+</script>
+<script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+<script type="text/javascript">
+    (window.cproArray = window.cproArray || []).push({ id: "u3031286" });
+</script>
+<script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+   
+     <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170719001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=5692429"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            //$(".toc a[target='_blank']").attr("target", "");
+
+            setTimeout(function () {
+                $(".toc a[target='_blank']").attr("target", "");
+            }, 500);
+
+        </script>
+
+</body>
+</html>   

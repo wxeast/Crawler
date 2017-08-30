@@ -1,0 +1,1351 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    
+<head>  
+            <link rel="canonical" href="http://blog.csdn.net/wx_east/article/details/74027698"/> 
+
+   
+
+  
+ <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848"> 
+       
+    <title>crond、crontab调研 - 晓东的博客
+        - CSDN博客</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="今天、发现了两个未知的事物 ，分别是crond、crontab。说他们是未知的事物，也是有原因的，因为我之前根本就没有听过这个东西，本着求知的心，我们今天来自己学习一下这两个知识。1、crond、crontab到底是甚么？【crond服务】crontab的用法" />
+
+    <meta name="keywords" content="crond,crontab" />
+
+   
+    <script src="http://static.blog.csdn.net/scripts/blog_static_head.min.js" type="text/javascript"></script>
+
+    
+        <!--new top-->
+       
+       
+        <!--new top-->
+    
+      <!-- ad begin -->
+         
+    <!-- ad end-->
+
+    <link rel="Stylesheet" type="text/css" href="http://static.blog.csdn.net/skin/skin-yellow/css/style.css?v=1.1" />
+
+    
+
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="/WX_East/rss/list" />
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="http://static.blog.csdn.net/scripts/SyntaxHighlighter/styles/default.css" />
+ 
+
+
+
+    <link href="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.css" type="text/css" rel="stylesheet" />
+     
+         <link rel="stylesheet" href="http://static.blog.csdn.net/css/csdn_blog_detail.min.css" />
+
+  
+
+
+    <!-- 请置于所有广告位代码之前 --> 
+            <script src="http://dup.baidustatic.com/js/ds.js"></script>
+
+</head>
+
+
+<body>
+     
+        <div class="tracking-ad" data-view="true" data-mod="ad_popu_72"  data-mtp="62" data-order="40" data-con="ad_content_2072" >
+                     <script id="popuLayer_js_q" src="http://ads.csdn.net/js/popuLayer.js" defer="defer"  type="text/javascript"></script>
+                <div id="layerd" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000">
+    	                <div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><!-- 广告占位容器 --><div id="cpro_u2895327"></div></div>
+                <script>  document.getElementById("popuLayer_js_q").onload = function () { var styObjd = styObj = { width: "300px", "height": parseInt(250) + 28 }; window.CSDN.Layer.PopuLayer("#layerd", { storageName: "layerd", styleObj: styObjd, total: 50, expoire: 1000 * 60 }); }</script><!-- 投放代码 --><script type="text/javascript">                    /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({ id: "u2895327" });  </script>  <script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
+     
+        </div>
+
+    <!-- 广告位开始 -->
+        
+    <!-- 广告位结束 -->
+
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="http://c.csdnimg.cn/public/common/toolbar/js/html.js" type="text/javascript"></script>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/wx_east">晓东的博客</a></h2>
+            <h3></h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        
+     
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>           
+                <li id="btnContents"><a href="http://blog.csdn.net/wx_east?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="http://static.blog.csdn.net/images/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/wx_east?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="http://static.blog.csdn.net/images/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/wx_east/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="http://static.blog.csdn.net/images/ico_rss.gif">订阅</span></a></li>                
+            
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "WX_East";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/wx_east";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod='popu_3' > 
+
+
+<a href="http://blog.csdn.net/epubit17/article/details/76811996">
+<font color=red><strong>赠书 | 异步2周年,技术图书免费选</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="http://blog.csdn.net/turingbooks/article/details/77479427">
+<font color=blue><strong>程序员8月书讯</strong></font></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp
+
+
+<a href="https://gitee.com/enterprises?from=csdn-sqbkxq">
+<font color=red><strong>项目管理+代码托管+文档协作，开发更流畅</strong></font></a>
+
+</div>                        </div>
+
+                        
+
+
+
+  
+
+
+
+
+
+
+<script   type="text/javascript" src="http://static.blog.csdn.net/scripts/category.js"></script>
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+      var isBole = false; 
+      var fasrc="http://my.csdn.net/my/favorite/miniadd?t=crond%e3%80%81crontab%e8%b0%83%e7%a0%94&u=http://blog.csdn.net/wx_east/article/details/74027698"
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+    <h1>
+        <span class="link_title"><a href="/wx_east/article/details/74027698">
+        crond、crontab调研        
+           
+        </a>
+        </span>
+
+         
+    </h1>
+</div>
+
+   
+
+        <div class="article_manage clearfix">
+        <div class="article_l">
+            <span class="link_categories">
+            标签：
+              <a href='http://www.csdn.net/tag/crond' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">crond</a><a href='http://www.csdn.net/tag/crontab' target=_blank onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">crontab</a>
+            </span>
+        </div>
+        <div class="article_r">
+            <span class="link_postdate">2017-07-01 11:43</span>
+            <span class="link_view" title="阅读次数">86人阅读</span>
+            <span class="link_comments" title="评论次数"> <a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(0)</span>
+            <span class="link_collect tracking-ad" data-mod="popu_171"> <a href="javascript:void(0);" onclick="javascript:collectArticle('crond%e3%80%81crontab%e8%b0%83%e7%a0%94','74027698');return false;" title="收藏">收藏</a></span>
+             <span class="link_report"> <a href="#report" onclick="javascript:report(74027698,2);return false;" title="举报">举报</a></span>
+
+        </div>
+    </div>    <style type="text/css">        
+            .embody{
+                padding:10px 10px 10px;
+                margin:0 -20px;
+                border-bottom:solid 1px #ededed;                
+            }
+            .embody_b{
+                margin:0 ;
+                padding:10px 0;
+            }
+            .embody .embody_t,.embody .embody_c{
+                display: inline-block;
+                margin-right:10px;
+            }
+            .embody_t{
+                font-size: 12px;
+                color:#999;
+            }
+            .embody_c{
+                font-size: 12px;
+            }
+            .embody_c img,.embody_c em{
+                display: inline-block;
+                vertical-align: middle;               
+            }
+             .embody_c img{               
+                width:30px;
+                height:30px;
+            }
+            .embody_c em{
+                margin: 0 20px 0 10px;
+                color:#333;
+                font-style: normal;
+            }
+    </style>
+    <script  type="text/javascript">
+        $(function () {
+            try
+            {
+                var lib = eval("("+$("#lib").attr("value")+")");
+                var html = "";
+                if (lib.err == 0) {
+                    $.each(lib.data, function (i) {
+                        var obj = lib.data[i];
+                        //html += '<img src="' + obj.logo + '"/>' + obj.name + "&nbsp;&nbsp;";
+                        html += ' <a href="' + obj.url + '" target="_blank">';
+                        html += ' <img src="' + obj.logo + '">';
+                        html += ' <em><b>' + obj.name + '</b></em>';
+                        html += ' </a>';
+                    });
+                    if (html != "") {
+                        setTimeout(function () {
+                            $("#lib").html(html);                      
+                            $("#embody").show();
+                        }, 100);
+                    }
+                }      
+            } catch (err)
+            { }
+            
+        });
+    </script>
+      <div class="category clearfix">
+        <div class="category_l">
+           <img src="http://static.blog.csdn.net/images/category_icon.jpg">
+            <span>分类：</span>
+        </div>
+        <div class="category_r">
+                    <label  onclick="GetCategoryArticles('6770252','WX_East','top','74027698');">
+                        <span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">Linux<em>（19）</em></span>
+                      <img class="arrow-down" src="http://static.blog.csdn.net/images/arrow_triangle _down.jpg" style="display:inline;">
+                      <img class="arrow-up" src="http://static.blog.csdn.net/images/arrow_triangle_up.jpg" style="display:none;">
+                        <div class="subItem">
+                            <div class="subItem_t"><a  href="http://blog.csdn.net/WX_East/article/category/6770252"  target="_blank">作者同类文章</a><i class="J_close">X</i></div>
+                            <ul class="subItem_l" id="top_6770252">                            
+                            </ul>
+                        </div>
+                    </label>                    
+        </div>
+    </div>
+        <div   class="bog_copyright">         
+            <p  class="copyright_p" >版权声明：本文为博主原创文章，未经博主允许不得转载。</p>
+        </div>
+
+  
+
+  
+  
+     
+
+
+<div id="article_content" class="article_content tracking-ad" data-mod=popu_307  data-dsm = "post" >
+
+<p><span style="font-family:Microsoft YaHei; font-size:14px"><span style="white-space:pre"></span>今天、发现了两个未知的事物 ，分别是crond、crontab。说他们是未知的事物，也是有原因的，因为我之前根本就没有听过这个东西，本着求知的心，我们今天来自己学习一下这两个知识。</span></p>
+<h1><span style="font-family:Microsoft YaHei; font-size:18px; color:#6600cc">1、crond、crontab到底是甚么？</span></h1>
+<h2><span style="font-family:Microsoft YaHei; font-size:14px; color:#cc33cc">【crond服务】</span></h2>
+<div><span style="font-family:Microsoft YaHei; font-size:14px"><span style="color:rgb(51,51,51)">crond是linux系统中用来定期执行命令或指定程序任务的一种服务或软件。</span><br>
+</span></div>
+<div><span style="color:rgb(51,51,51)"><span style="font-family:Microsoft YaHei"></span></span>
+<p style="font-size:14px; margin:10px auto; padding-top:0px; padding-bottom:0px; color:rgb(51,51,51)">
+<span style="margin:0px; padding:0px">linux系统的定时任务crond,相当于我们平时生活中的闹钟的功能。可以满足周期性执行任务的需求。</span></p>
+<p style="font-size:14px; margin:10px auto; padding-top:0px; padding-bottom:0px; color:rgb(51,51,51)">
+<span style="margin:0px; padding:0px">并且Linux下的crond服务是 一种<a target="_blank" target="_blank" href="http://blog.csdn.net/wx_east/article/details/73874160">守护进程</a>；<span style="color:rgb(63,63,63)">crond服务通常被放在/etc/init.d/crond , 这样就可以在系统启动后自动启动crond服务。<span style="background-color:rgb(254,254,242)">rond进程每分钟会定期检查是否有要执行的任务，如果有要执行的任务，则自动执行该任务。</span></span></span></p>
+<p style="font-size:14px; margin:10px auto; padding-top:0px; padding-bottom:0px; color:rgb(51,51,51)">
+<span style="margin:0px; padding:0px"><span style="color:rgb(63,63,63)"><a target="_blank" target="_blank" href="http://lib.csdn.net/base/linux" class="replace_word" title="Linux知识库" style="color:rgb(223,52,52); font-weight:bold">linux</a><span style="color:rgb(63,63,63)">下的任务调度分为两类，系统任务调度和用户任务调度。&nbsp;</span></span></span></p>
+<p style="font-size:14px; margin:10px auto; padding-top:0px; padding-bottom:0px; color:rgb(51,51,51)">
+<span style="margin:0px; padding:0px"><span style="color:rgb(63,63,63)"><span style="color:rgb(63,63,63)"><strong>系统任务调度</strong>：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。&nbsp;</span></span></span></p>
+<p style="font-size:14px; margin:10px auto; padding-top:0px; padding-bottom:0px; color:rgb(51,51,51)">
+<span style="color:rgb(63,63,63)">&nbsp;crontab在/etc目录下面存在cron.d，cron.dailycron.weekly,cron.monthly,cron.hourly五个目录和crontab文件。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; color:rgb(51,51,51)">
+</p>
+<ul style="color:rgb(63,63,63)">
+<li style=""><span style="font-size:12px">cron.d是系统自动定期需要做的任务，但是又不是按小时，按天，按星期，按月来执行的，那么就放在这个目录下面。如果是按小时，按天，按星期，按月的来执行的话，则可以放到相应的目录下面去。</span></li><li style=""><span style="font-size:12px">cron.hourly是每个小时执行一次的任务</span></li><li style=""><span style="font-size:12px">cron.daily是每天执行一次的任务</span></li><li style=""><span style="font-size:12px">cron.weekly是每个星期执行一次的任务</span></li><li style=""><span style="font-size:12px">cron.monthly是每月执行一次的任务</span></li></ul>
+<p></p>
+<span style="font-size:14px">我们现在打开文件crontab看看，文件显示如下</span></div>
+<div><span style="color:rgb(51,51,51)"><span style="font-family:Microsoft YaHei; font-size:14px"><img src="http://img.blog.csdn.net/20170701105207509?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</span></span></div>
+<div><span style="color:rgb(51,51,51)"><span style="font-family:Microsoft YaHei"></span></span>
+<p style="font-size:14px; margin-top:0px; margin-bottom:1.1em; color:rgb(63,63,63)">
+前四行是用来配置crond任务运行的环境变量。</p>
+<ul style="color:rgb(63,63,63)">
+<li style=""><span style="font-size:12px">第一行SHELL变量指定了系统要使用哪个shell，这里是bash。</span></li><li style=""><span style="font-size:12px">第二行PATH变量指定了系统执行 命令的路径。</span></li><li style=""><span style="font-size:12px">第三行MAILTO变量指定了crond的任务执行信息将通过电子邮件发送给root用户，如果MAILTO变量的&#20540;为空，则表示不发送任务 执行信息给用户。</span></li><li style=""><span style="background-color:rgb(254,254,242)"><span style="font-size:12px">第四行的HOME变量指定了在执行命令或者脚本时使用的主目录。</span></span></li></ul>
+</div>
+<div><span style="color:rgb(51,51,51)"><span style="font-family:Microsoft YaHei; font-size:14px"><span style="background-color:rgb(254,254,242)"><strong>用户任务调度</strong>：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。所有用户定义的crontab 文件都被保存在 /var/spool/cron目录中。其文件名与用户名一致。</span><br>
+</span></span></div>
+<div>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-family:Microsoft YaHei; font-size:14px">使用者权限文件：</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-family:Microsoft YaHei; font-size:12px"></span></p>
+<ul style="color:rgb(63,63,63)">
+<li style="">
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+文件：/etc/cron.deny &nbsp; &nbsp;&nbsp;该文件中所列用户不允许使用crontab命令</p>
+</li><li style="">
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+文件：/etc/cron.allow &nbsp; &nbsp; &nbsp; &nbsp;该文件中所列用户允许使用crontab命令</p>
+</li><li style="">
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+文件：/var/spool/cron/ &nbsp; &nbsp;&nbsp;所有用户crontab文件存放的目录,以用户名命名</p>
+</li></ul>
+<h2><span style="font-size:14px; color:#cc33cc"><span style="font-family:Microsoft YaHei">【crontab】文件</span></span></h2>
+</div>
+<div><span style="font-family:Microsoft YaHei; font-size:14px"><span style="white-space:pre"></span>用户所建立的crontab文件中，每一行都代表一项任务，每行的每个字段代表一项设置，它的&#26684;式共分为六个字段，前五段是时间设定段，第六段是要执行的命令段，&#26684;式如下：</span></div>
+<div><span style="font-family:Microsoft YaHei; font-size:12px"></span>
+<p style="color:rgb(51,51,51); margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5; font-size:13px; font-family:Verdana,Arial,Helvetica,sans-serif; background-color:rgb(254,254,242)">
+minute hour day month week command</p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-family:Microsoft YaHei">其中：</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+</p>
+<ul style="color:rgb(63,63,63)">
+<li style=""><span style="font-family:Microsoft YaHei">hour：表示小时，可以是从0到23之间的任何整数。</span></li><li style=""><span style="font-family:Microsoft YaHei">day：表示日期，可以是从1到31之间的任何整数。</span></li><li style=""><span style="font-family:Microsoft YaHei">month：表示月份，可以是从1到12之间的任何整数。</span></li><li style=""><span style="font-family:Microsoft YaHei">week：表示星期几，可以是从0到7之间的任何整数，这里的0或7代表星期日。</span></li><li style=""><span style="font-family:Microsoft YaHei">command：要执行的命令，可以是系统命令，也可以是自己编写的脚本文件。</span></li></ul>
+<p></p>
+<span style="font-family:Microsoft YaHei; font-size:12px"><span style="white-space:pre"></span><img src="http://img.blog.csdn.net/20170701111023707?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvV1hfRWFzdA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br>
+</span></div>
+<div><span style="font-family:Microsoft YaHei; font-size:12px"><br>
+</span></div>
+<div>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-family:Microsoft YaHei; font-size:14px">在以上各个字段中，还可以使用以下特殊字符：</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-family:Microsoft YaHei; font-size:14px">星号（*）：代表所有可能的&#20540;，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-family:Microsoft YaHei; font-size:14px">逗号（,）：可以用逗号隔开的&#20540;指定一个列表范围，例如，“1,2,5,7,8,9”</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-family:Microsoft YaHei; font-size:14px">中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-family:Microsoft YaHei; font-size:14px">正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+</p>
+<h1 style="margin-top:0px; margin-bottom:1.1em"><span style="font-size:18px; color:#6600cc">2、crontab的用法</span></h1>
+<p style="margin-top:0px; margin-bottom:1.1em"><span style="font-size:14px">如何使用crontab 命令添加或者编辑需要定时执行的任务：&nbsp;</span></p>
+<p style="margin-top:0px; margin-bottom:1.1em"><span style="font-size:14px">1、命令&#26684;式</span></p>
+<p style="margin-top:0px; margin-bottom:1.1em"><span style="font-size:14px">crondtab [-u user] file/-l/-r/-e&nbsp;</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">2、命令参数：</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">-u user：用来设定某个用户的crontab服务，例如，“-u ixdba”表示设定ixdba用户的crontab服务，此参数一般有root用户来运行。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">file：file是命令文件的名字,表示将file做为crontab的任务列表文件并载入crontab。如果在命令行中没有指定这个文件，crontab命令将接受标准输入（键盘）上键入的命令，并将它们载入crontab。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">-e：编辑某个用户的crontab文件内容。如果不指定用户，则表示编辑当前用户的crontab文件。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">-l：显示某个用户的crontab文件内容，如果不指定用户，则表示显示当前用户的crontab文件内容。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">-r：从/var/spool/cron目录中删除某个用户的crontab文件，如果不指定用户，则默认删除当前用户的crontab文件。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">-i：在删除用户的crontab文件时给确认提示。</span></p>
+<span style="font-size:14px">3、常用方法：<br>
+</span>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">1). 创建一个新的crontab文件</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">在 考虑向cron进程提交一个crontab文件之前，首先要做的一件事情就是设置环境变量EDITOR。cron进程根据它来确定使用哪个编辑器编辑 crontab文件。9 9 %的UNIX和LINUX用户都使用vi，如果你也是这样，那么你就编辑$ HOME目录下的. profile文件，在其 中加入这样一行：</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">EDITOR=vi; export EDITOR</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">然后保存并退出。不妨创建一个名为&lt;user&gt; cron的文件，其中&lt;user&gt;是用户名，例如， davecron。在该文件中加入如下的内容。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px"># (put your own initials here)echo the date to the console every</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px"># 15minutes between 6pm and 6am</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">0,15,30,45 18-06 * * * /bin/echo ‘date’ &gt; /dev/console</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">保存并退出。确信前面5个域用空&#26684;分隔。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">在 上面的例子中，系统将每隔1 5分钟向控制台输出一次当前时间。如果系统崩溃或挂起，从最后所显示的时间就可以一&#30524;看出系统是什么时间停止工作的。在有些 系统中，用tty1来表示控制台，可以根据实际情况对上面的例子进行相应的修改。为了提交你刚刚创建的crontab文件，可以把这个新创建的文件作为 cron命令的参数：</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">$ crontab davecron</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">现在该文件已经提交给cron进程，它将每隔1 5分钟运行一次。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">同时，新创建文件的一个副本已经被放在/var/spool/cron目录中，文件名就是用户名(即dave)。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">2). 列出crontab文件</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">为了列出crontab文件，可以用：</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">$ crontab -l</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">0,15,30,45,18-06 * * * /bin/echo `date` &gt; dev/tty1</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">你将会看到和上面类&#20284;的内容。可以使用这种方法在$ H O M E目录中对crontab文件做一备份：</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">$ crontab -l &gt; $HOME/mycron</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">这样，一旦不小心误删了crontab文件，可以用上一节所讲述的方法迅速恢复。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">3). 编辑crontab文件</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">如果希望添加、删除或编辑crontab文件中的条目，而E D I TO R环境变量又设置为v i，那么就可以用v i来编辑crontab文件，相应的命令为：</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">$ crontab -e</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">可以像使用v i编辑其他任何文件那样修改crontab文件并退出。如果修改了某些条目或添加了新的条目，那么在保存该文件时， c r o n会对其进行必要的完整性检查。如果其中的某个域出现了超出允许范围的&#20540;，它会提示你。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">我们在编辑crontab文件时，没准会加入新的条目。例如，加入下面的一条：</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px"># DT:delete core files,at 3.30am on 1,7,14,21,26,26 days of each month</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">30 3 1,7,14,21,26 * * /bin/find -name “core’ -exec rm {} \;</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">现在保存并退出。最好在crontab文件的每一个条目之上加入一条注释，这样就可以知道它的功能、运行时间，更为重要的是，知道这是哪位用户的作业。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">现在让我们使用前面讲过的crontab -l命令列出它的全部信息：</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">$ crontab -l</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px"># (crondave installed on Tue May 4 13:07:43 1999)</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px"># DT:ech the date to the console every 30 minites</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">0,15,30,45 18-06 * * * /bin/echo `date` &gt; /dev/tty1</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px"># DT:delete core files,at 3.30am on 1,7,14,21,26,26 days of each month</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">30 3 1,7,14,21,26 * * /bin/find -name “core’ -exec rm {} \;</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">4). 删除crontab文件</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">要删除crontab文件，可以用：</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">$ crontab -r</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">5). 恢复丢失的crontab文件</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">如果不小心误删了crontab文件，假设你在自己的$ H O M E目录下还有一个备份，那么可以将其拷贝到/var/spool/cron/&lt;username&gt;，其中&lt;username&gt;是用户名。如果由于权限问题无法完成拷贝，可以用：</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">$ crontab &lt;filename&gt;</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">其中，&lt;filename&gt;是你在$ H O M E目录中副本的文件名。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">我建议你在自己的$ H O M E目录中保存一个该文件的副本。我就有过类&#20284;的经历，有数次误删了crontab文件（因为r键紧挨在e键的右边）。这就是为什么有些系统文档建议不要直接编辑crontab文件，而是编辑该文件的一个副本，然后重新提交新的文件。</span></p>
+<p style="margin:10px auto; padding-top:0px; padding-bottom:0px; line-height:1.5">
+<span style="font-size:14px">有些crontab的变体有些怪异，所以在使用crontab命令时要&#26684;外小心。如果遗漏了任何选项，crontab可能会打开一个空文件，或者看起来像是个空文件。这时敲delete键退出，不要按&lt;Ctrl-D&gt;，否则你将丢失crontab文件。</span></p>
+</div>
+<div><span style="font-size:14px">4、使用实例</span></div>
+<div><span style="font-size:14px"></span>
+<p style="margin-top:0px; margin-bottom:1.1em"></p>
+<p style="margin:0.8em 0px; padding:0px; line-height:1.3em"><span style="font-family:Microsoft YaHei; font-size:12px">实例1：每天早上7点执行一次 /bin/ls :0 7 * * * /bin/ls</span></p>
+<p style="margin:0.8em 0px; padding:0px; line-height:1.3em"><span style="font-family:Microsoft YaHei; font-size:12px">实例2：晚上11点到早上8点之间每两个小时，早上8点：0 23-7/2，8 * * * date</span></p>
+<p style="margin:0.8em 0px; padding:0px; line-height:1.3em"><span style="font-family:Microsoft YaHei; font-size:12px">实例3：每天早上6点10分：10 6 * * * date</span></p>
+<p style="margin:0.8em 0px; padding:0px; line-height:1.3em"><span style="font-family:Microsoft YaHei; font-size:12px">实例4：每两个小时：0 * / 2 * * * date</span></p>
+<p style="margin:0.8em 0px; padding:0px; line-height:1.3em"><span style="font-family:Microsoft YaHei; font-size:12px">实例5：晚上11点到早上8点之间每两个小时，早上8点：0 23-7/2，8 * * * date</span></p>
+<p style="margin:0.8em 0px; padding:0px; line-height:1.3em"><span style="font-family:Microsoft YaHei; font-size:12px">实例6：每个月的4号和每个&#31036;拜的&#31036;拜一到&#31036;拜三的早上11点：0 11 4 * mon-wed date</span></p>
+<p style="margin:0.8em 0px; padding:0px; line-height:1.3em"><span style="font-family:Microsoft YaHei; font-size:12px">实例7：1月份日早上4点：0 4 1 jan * date</span></p>
+<p style="margin:0.8em 0px; padding:0px; line-height:1.3em"><span style="font-family:Microsoft YaHei; font-size:12px">linux系统的管理员经常用到crontab的例子 :</span></p>
+<p style="margin:0.8em 0px; padding:0px; line-height:1.3em"><span style="font-family:Microsoft YaHei; font-size:12px">在 12 月内, 每天的早上 6 点到 12 点中，每隔3个小时执行一次 /usr/bin/backup :0 6-12/3 * 12 */usr/bin/backup</span></p>
+<p style="margin:0.8em 0px; padding:0px; line-height:1.3em"><span style="font-family:Microsoft YaHei; font-size:12px">每晚的21:30重启apache：30 21 * * * /etc/init.d/apache2 restart</span></p>
+<p style="margin:0.8em 0px; padding:0px; line-height:1.3em"><span style="font-family:Microsoft YaHei; font-size:12px">每月1、10、22日的4 : 45重启apache：45 4 1,10,22 * * /etc/init.d/apache2 restart</span></p>
+<p style="margin:0.8em 0px; padding:0px; line-height:1.3em"><span style="font-family:Microsoft YaHei; font-size:12px">每周六、周日的1 : 10重启apache：10 1 * * 6,0 /etc/init.d/apache2 restart</span></p>
+<div>
+<div>
+<div>
+<div><br>
+</div>
+<div><a target="_blank" target="_blank" href="http://www.cnblogs.com/intval/p/5763929.html">参考链接</a></div>
+<div><br>
+</div>
+<p></p>
+<br>
+</div>
+<br>
+</div>
+<br>
+</div>
+<br>
+<p></p>
+</div>
+   
+</div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+
+
+
+<div class="bdsharebuttonbox tracking-ad" style="float: right;" data-mod="popu_172">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"  style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"style="background-position:0 -1612px !important" ></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+   
+
+<!--172.16.140.14-->
+
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+
+ 
+
+
+        <div id="digg" ArticleId="74027698" >
+            <dl id="btnDigg" class="digg digg_disable"  onclick="btndigga();">
+               
+                 <dt>顶</dt>
+                <dd>0</dd>
+            </dl>
+           
+              
+            <dl id="btnBury" class="digg digg_disable"  onclick="btnburya();">
+              
+                  <dt>踩</dt>
+                <dd>0</dd>               
+            </dl>
+            
+        </div>
+     <div class="tracking-ad" data-mod="popu_222"><a href="javascript:void(0);" >&nbsp;</a>   </div>
+    <div class="tracking-ad" data-mod="popu_223"> <a href="javascript:void(0);" >&nbsp;</a></div>
+    <script type="text/javascript">
+        function btndigga() {
+            $(".tracking-ad[data-mod='popu_222'] a").click();
+        }
+        function btnburya() {
+            $(".tracking-ad[data-mod='popu_223'] a").click();
+        }
+            </script>
+
+   <ul class="article_next_prev">
+                <li class="prev_article"><span  onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='http://blog.csdn.net/WX_East/article/details/74002268';">上一篇</span><a href="http://blog.csdn.net/WX_East/article/details/74002268" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">线程安全与可重入函数之间的区别</a></li>
+                <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='http://blog.csdn.net/WX_East/article/details/74332253';">下一篇</span><a href="http://blog.csdn.net/WX_East/article/details/74332253" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">什么是NAT技术与代理服务器</a></li>
+    </ul>
+
+    <div style="clear:both; height:10px;"></div>
+
+
+            <div class="similar_article"   >
+                    <h4></h4>
+                    <div class="similar_c"style="margin:20px 0px 0px 0px">
+                        <div class="similar_c_t">
+                          &nbsp;&nbsp;相关文章推荐
+                        </div>
+                   
+                        <div class="similar_wrap tracking-ad" data-mod="popu_36"  style="max-height:250px">                       
+                            <ul class="similar_list fl">    
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/Elay0701/article/details/73998669" title="crond和crontab调研" strategy="BlogCommendFromCsdn_0" target="_blank">crond和crontab调研</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/huiyiCourse/series_detail/54?utm_source=blog7" title="【直播】机器学习&amp;数据挖掘7周实训--韦玮" strategy="undefined" target="_blank">【直播】机器学习&amp;数据挖掘7周实训--韦玮</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/sqlnever/3469721" title="Crond 命令详解-绝对自己经验" strategy="BlogCommendFromCsdn_1" target="_blank">Crond 命令详解-绝对自己经验</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/huiyiCourse/detail/501?utm_source=blog7" title="【直播】大中型UGC信息网站SEO分享--乔向阳" strategy="undefined" target="_blank">【直播】大中型UGC信息网站SEO分享--乔向阳</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/xixihaha44/8890203" title="shell脚本[crontab]" strategy="BlogCommendFromCsdn_2" target="_blank">shell脚本[crontab]</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/huiyiCourse/series_detail/60?utm_source=blog7" title="【直播】打通Linux脉络 进程、线程和调度--宋宝华" strategy="undefined" target="_blank">【直播】打通Linux脉络 进程、线程和调度--宋宝华</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/agate_zhang/article/details/73753755" title="Linux下的crond和crontab调研" strategy="BlogCommendFromCsdn_3" target="_blank">Linux下的crond和crontab调研</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/combo/detail/240?utm_source=blog7" title="【套餐】Java高级程序员专业学习路线--肖海鹏" strategy="undefined" target="_blank">【套餐】Java高级程序员专业学习路线--肖海鹏</a>
+                                   </li>
+                            </ul>
+                              <ul class="similar_list fr">      
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/yun2013abc/7664045" title="结合crontab实现数据库定时备份" strategy="BlogCommendFromCsdn_4" target="_blank">结合crontab实现数据库定时备份</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/course/detail/474?utm_source=blog7" title="【课程】C++语言基础--贺利坚" strategy="undefined" target="_blank">【课程】C++语言基础--贺利坚</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/Jasmine_yaoyao/article/details/74011973" title="crond与crontab调研" strategy="BlogCommendFromCsdn_5" target="_blank">crond与crontab调研</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://edu.csdn.net/course/detail/5222?utm_source=blog7" title="【课程】深度学习基础与TensorFlow实践--AI100" strategy="undefined" target="_blank">【课程】深度学习基础与TensorFlow实践--AI100</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/yun2013abc/7664029" title="crontab命令格式与例子" strategy="BlogCommendFromCsdn_6" target="_blank">crontab命令格式与例子</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://blog.csdn.net/qq_37924645/article/details/73850394" title="【Linux】调研 crond 和 crontab" strategy="BlogCommendFromCsdn_7" target="_blank">【Linux】调研 crond 和 crontab</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/james2102/9619059" title="crontab格式解析cpp源码" strategy="BlogCommendFromCsdn_8" target="_blank">crontab格式解析cpp源码</a>
+                                   </li>
+                                   <li>
+                                       <em>•</em>
+                                       <a href="http://download.csdn.net/download/zxh102/9383647" title="Unix Crontab" strategy="BlogCommendFromCsdn_9" target="_blank">Unix Crontab</a>
+                                   </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>   
+      
+</div>
+
+     <div>
+           
+
+       
+                           
+            <!-- 广告位：PC端-博客内容页-banner1-960*90 --> 
+            <script> 
+                (function() { 
+                    var s = "_" + Math.random().toString(36).slice(2); 
+                    document.write('<div id="' + s + '"></div>'); 
+                    (window.slotbydup=window.slotbydup || []).push({ 
+                        id: '4228013', 
+                        container: s, 
+                        size: '0,0', 
+                        display: 'inlay-fix' 
+                    }); 
+                })(); 
+            </script>
+    </div>
+
+<div id="suggest"></div>
+         <script  language="javascript" type='text/javascript'>     
+             $(function(){
+                 $.get("/WX_East/svc/GetSuggestContent/74027698",function(data){
+                     $("#suggest").html(data);
+                 });     
+             });             
+         </script>  
+
+
+
+            
+                                    
+            
+                                    
+
+        <!-- 广告位开始 -->
+        <!-- 广告位结束 -->
+
+
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list">
+    </div>
+    <div id="comment_bar">
+    </div>
+    <div id="comment_form">
+    </div>
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '74027698';
+    var commentscount = 0;
+    var islock = false
+</script>
+
+    <div id="ad_bot">
+    </div>
+<div id="report_dialog">
+</div>
+
+<div id="d-top"  style="bottom:60px;">
+
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="http://static.blog.csdn.net/images/blog-icon-reply.png" alt="快速回复">
+        </a>    
+    <a id="d-top-a" class="btn btn-top backtop"  style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])" style="">         
+         <img src="http://static.blog.csdn.net/images/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);    
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+
+
+
+
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){        
+        
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });         
+
+        },200);  
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },5000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },10000);
+
+        setTimeout(function(){
+            $(".math").each(function(index,value){$(this).find("span").last().css("color","#fff"); })
+        },15000);
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }   
+
+    var articletitle='crond、crontab调研';
+
+</script>
+
+
+
+
+
+
+
+
+
+
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+                   
+           <div id="side">
+               
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/WX_East" target="_blank">
+    <img src="http://avatar.csdn.net/3/6/3/1_wx_east.jpg" title="访问我的空间" style="max-width:90%"/>
+    </a>
+    <br />
+    <span><a href="http://my.csdn.net/WX_East" class="user_name" target="_blank">WX_East</a></span>
+</div>
+<div class="interact">
+
+    <a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]"></a>
+
+ <a href="javascript:void(0);" class="letter"  title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=WX_East','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                <div id="bms_box">
+                                            <a  target="_blank">
+                                                    <img src="http://c.csdnimg.cn/jifen/images/xunzhang/xunzhang/chizhiyiheng.png" onmouseover="m_over_m(this,4)" onmouseout="m_out_m()" alt="4" >
+                                            </a>
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>17298次</span></li>
+    <li>积分：<span>991</span> </li>    
+    <li >等级： <span style="position:relative;display:inline-block;z-index:1" >
+            <img src="http://c.csdnimg.cn/jifen/images/xunzhang/jianzhang/blog3.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：991 </div>
+        </span>  </li>
+    <li>排名：<span>千里之外</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>82篇</span></li>
+    <li>转载：<span>6篇</span></li>
+    <li>译文：<span>0篇</span></li>
+    <li>评论：<span>3条</span></li>
+</ul>
+</ul>
+</div>
+
+
+<div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body" class="form_search">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search csdn-tracking-statistics" target="_blank"  data-mod="popu_306">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字" /></span>
+        <input id="btnSubmit" type="button" value="搜索" title="search in blog" />
+        <input type="hidden" name="q" id="inputQ" />
+        <input type="hidden" name="t" value="blog" />
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+
+   
+    $(function () {
+        $("#btnSubmit").unbind("click");
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {           
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            if ($("#inputSearch").val() == "") {               
+                alert("请录入搜索关键词！");                         
+                return false;
+            }
+            //var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";           
+            var url = "https://www.baidu.com/s?wd=" + encodeURIComponent($("#inputSearch").val()) + "%20site%3Ablog.csdn.net"
+            window.location.href = url;
+        }   
+    });
+</script><div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">    
+                 <li>
+                    <a href="/WX_East/article/category/6356200" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C</a><span>(12)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6359534" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">课程设计</a><span>(2)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6379789" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C/C++</a><span>(9)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6424765" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">java</a><span>(0)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6435949" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">C++</a><span>(22)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6559414" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">数据结构</a><span>(13)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6770252" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">Linux</a><span>(20)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6794250" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">剑指offer面试题</a><span>(7)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6886592" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">项目</a><span>(1)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/6889710" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">leetcode</a><span>(15)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/7013266" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">网络</a><span>(2)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/7013268" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">网络编程</a><span>(5)</span>
+                </li>
+                 <li>
+                    <a href="/WX_East/article/category/7028828" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">shell</a><span>(1)</span>
+                </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list">
+<!--归档统计-->
+<li><a href="/WX_East/article/month/2017/08">2017年08月</a><span>(4)</span></li><li><a href="/WX_East/article/month/2017/07">2017年07月</a><span>(9)</span></li><li><a href="/WX_East/article/month/2017/06">2017年06月</a><span>(11)</span></li><li><a href="/WX_East/article/month/2017/05">2017年05月</a><span>(11)</span></li><li><a href="/WX_East/article/month/2017/04">2017年04月</a><span>(18)</span></li><li><a href="/WX_East/article/month/2017/03">2017年03月</a><span>(6)</span></li><li><a href="/WX_East/article/month/2017/02">2017年02月</a><span>(5)</span></li><li><a href="/WX_East/article/month/2017/01">2017年01月</a><span>(1)</span></li><li><a href="/WX_East/article/month/2016/12">2016年12月</a><span>(5)</span></li><li><a href="/WX_East/article/month/2016/11">2016年11月</a><span>(3)</span></li><li><a href="/WX_East/article/month/2016/10">2016年10月</a><span>(3)</span></li><li><a href="/WX_East/article/month/2016/09">2016年09月</a><span>(2)</span></li><li><a href="/WX_East/article/month/2016/08">2016年08月</a><span>(11)</span></li>
+</div>
+</ul>
+</div>
+<div id="hotarticls" class="panel tracking-ad" data-mod="popu_340">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="/wx_east/article/details/52177378" title="C++ 课设 职工工资管理系统">C++ 课设 职工工资管理系统</a><span>(1375)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52202970" title="排序算法解析">排序算法解析</a><span>(1190)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/70240663" title="进程状态与环境变量的解析">进程状态与环境变量的解析</a><span>(1006)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52180432" title="注释转换   （将C注释转换为C++注释）">注释转换   （将C注释转换为C++注释）</a><span>(666)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52287518" title="C/C++的mem函数和strcpy函数的区别和应用">C/C++的mem函数和strcpy函数的区别和应用</a><span>(640)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/53558048" title="特殊矩阵的压缩存储">特殊矩阵的压缩存储</a><span>(433)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52667845" title="细说   class类中的this指针与 构造函数">细说   class类中的this指针与 构造函数</a><span>(396)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52328966" title="编程中  常见的位运算问题">编程中  常见的位运算问题</a><span>(368)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/53486917" title="迷宫问题求解">迷宫问题求解</a><span>(356)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/73321340" title="使用gdb来调试多线程、多进程">使用gdb来调试多线程、多进程</a><span>(355)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel tracking-ad" data-mod="popu_341">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="/wx_east/article/details/52202970" title="排序算法解析">排序算法解析</a><span>(2)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52177378" title="C++ 课设 职工工资管理系统">C++ 课设 职工工资管理系统</a><span>(1)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/77427224" title="模拟实现printf函数">模拟实现printf函数</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52287518" title="C/C++的mem函数和strcpy函数的区别和应用">C/C++的mem函数和strcpy函数的区别和应用</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52275301" title="关于字符串问题的拓展">关于字符串问题的拓展</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52194778" title="注释转换 续  (C++注释转换为C注释)">注释转换 续  (C++注释转换为C注释)</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52180432" title="注释转换   （将C注释转换为C++注释）">注释转换   （将C注释转换为C++注释）</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52179813" title="mem系列函数的实现">mem系列函数的实现</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52168407" title="string 系列函数模拟实现">string 系列函数模拟实现</a><span>(0)</span>
+</li>
+<li>
+<a href="/wx_east/article/details/52167808" title="动态内存增长的通讯录">动态内存增长的通讯录</a><span>(0)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend">
+<ul>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/77651442" target="_blank">* CSDN日报20170828——《4个方法快速打造你的阅读清单》</a></li>
+<li><a href="http://blog.csdn.net/blogdevteam/article/details/77647813" 
+target="_blank">* CSDN博客模板调查问卷</a></li>
+<li><a href="http://blog.csdn.net/bemavery/article/details/77448589"target="_blank">* 秒杀系统的一点思考</a></li>
+<li><a href="http://blog.csdn.net/sweettool/article/details/77018506" 
+target="_blank">* TCP网络通讯如何解决分包粘包问题</a></li>
+<li><a href="http://blog.csdn.net/mindfloating/article/details/77434604" 
+target="_blank">* 技术与技术人员的价值</a></li>
+<li><a href="http://blog.csdn.net/gitchat/article/details/77338211" 
+target="_blank">* GitChat·人工智能 | 除了深度学习，机器翻译还需要啥？
+</a></li>
+
+</ul></ul>
+</div>
+
+
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="/wx_east/article/details/52177378#comments">C++ 课设 职工工资管理系统</a>
+    <p style="margin:0px;"><a href="/fengqitide" class="user_name">fengqitide</a>:
+好
+    </p>
+    </li>
+    <li>
+   
+         <a href="/wx_east/article/details/52202970#comments">排序算法解析</a>
+    <p style="margin:0px;"><a href="/WX_East" class="user_name">WX_East</a>:
+@qq_26525215:谢谢
+    </p>
+    </li>
+    <li>
+   
+         <a href="/wx_east/article/details/52202970#comments">排序算法解析</a>
+    <p style="margin:0px;"><a href="/qq_26525215" class="user_name">qq_26525215</a>:
+不错，很详细
+    </p>
+    </li>
+</ul>
+</div>
+    </div>
+    <div class="clear">
+    </div>
+
+                 <!-- 广告位开始 --> 
+                <!-- 广告位结束 -->
+                   <div class="tracking-ad" data-view="true" data-mod="ad_popu_189" data-mtp="63" data-order="40" data-con="ad_content_1259" style="width: 250px; height: 500px;">
+                        <div id="nav_show_top_stop" style="width: 250px;height: 500px;z-index:1000"><div id="cpro_u2734133"></div><div id="cpro_u3031286"></div></div>
+                   </div>
+                    <script>
+
+                        setTimeout(function () {
+                            var naviga_offsetTop = 0; function naviga_stay_top() {
+                                var scrollTop = jQuery(document).scrollTop();
+                                if (scrollTop > naviga_offsetTop) {
+                                    jQuery("#nav_show_top_stop").css({ "position": "fixed" });
+                                    jQuery("#nav_show_top_stop").css({ "top": "0px" });
+                                } else { jQuery("#nav_show_top_stop").css({ "position": "fixed" }); jQuery("#nav_show_top_stop").css({ "top": naviga_offsetTop - scrollTop + "px" }); }
+                            }
+                            function onload_function() {
+                                naviga_offsetTop = jQuery("#nav_show_top_stop").position().top;
+                                jQuery(window).bind("scroll", naviga_stay_top); jQuery(window).bind("mousewheel", naviga_stay_top);
+                                jQuery(document).bind("scroll", naviga_stay_top); jQuery(document).bind("mousewheel", naviga_stay_top);
+                            } jQuery(document).ready(onload_function);
+                        }, 200);
+
+                    </script>
+                   <script type="text/javascript">
+                       /*PC端-博客内容页左侧Button-250*250，创建于2016-08-15*/
+                       (window.cproArray = window.cproArray || []).push({ id: "u2734133" });
+</script>
+<script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+<script type="text/javascript">
+    (window.cproArray = window.cproArray || []).push({ id: "u3031286" });
+</script>
+<script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/c.js"></script>
+
+           </div>   
+
+            <div class="clear">
+            </div>
+        </div>
+
+        
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="http://passport.csdn.net/content/loginbox/login.js"></script>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<span class='tracking-ad' data-mod='popu_167'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a></span>"
+                    + "<span class='tracking-ad' data-mod='popu_170'><a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a></span>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+
+        $(".bar").show();
+    });
+</script>
+
+
+
+
+
+    </div>
+      <!--new top-->
+    
+
+     
+
+   
+   
+     <!--new top-->
+   
+   
+
+    
+    
+    
+   
+
+   
+
+
+       <script type="text/javascript" src="http://static.blog.csdn.net/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+          <script type="text/javascript">
+              //$(function () {
+              //    setTimeout(function () {
+              //        var searchtitletags = articletitle + ',' + $("#tags").html();
+              //        searchService({
+              //            index: 'blog',
+              //            query: searchtitletags,
+              //            from: 5,
+              //            size: 5,
+              //            appendTo: '#res',
+              //            url: 'recommend',
+              //            his: 2,
+              //            client: "blog_cf_enhance",
+              //            tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+              //        });
+              //    }, 1000);
+              //});
+
+         </script>
+    
+    <script src="http://static.blog.csdn.net/scripts/csdn_blog_detail.min.js" type="text/javascript"></script>
+        
+    <script type="text/javascript" src="http://c.csdnimg.cn/blog/csdn_public_blog_detail.min.js?20170719001"></script>
+
+    <script type="text/javascript" src="http://medal.blog.csdn.net/showblogmedal.ashx?blogid=5692429"></script>
+
+     
+    
+
+
+  <div id="a52b5334d" style="width: 1px; height: 1px; display: none;">
+                    <script id="adJs52b5334"></script>
+                    <script>document.getElementById("adJs52b5334").src = "http://ads.csdn.net/js/opt/52b5334.js?t=" + Math.random();</script>
+   </div>
+
+    
+    
+        
+     
+
+    
+          
+    <div class="pop_CA_cover"  style="display:none"></div>
+    <div class="pop pop_CA"  style="display:none">
+          <div class="CA_header">
+            收藏助手
+            <span class="cancel_icon"  id="fapancle"  onclick="$('.pop_CA').hide();$('.pop_CA_cover').hide();"></span>
+          </div>
+          <iframe src="" id="fa" frameborder="0" width="100%" height="360"  scrolling="no" ></iframe>
+    </div>
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var fromjs = $("#fromjs");
+                if (fromjs.length > 0) {
+                    $("#fromjs .markdown_views pre").addClass("prettyprint");
+                    prettyPrint();
+
+                    $('pre.prettyprint code').each(function () {
+                        var lines = $(this).text().split('\n').length;
+                        var $numbering = $('<ul/>').addClass('pre-numbering').hide();
+                        $(this).addClass('has-numbering').parent().append($numbering);
+                        for (i = 1; i <= lines; i++) {
+                            $numbering.append($('<li/>').text(i));
+                        };
+                        $numbering.fadeIn(1700);
+                    });
+
+                    $('.pre-numbering li').css("color", "#999");
+                }
+            });
+
+            $(".markdown_views a[target!='_blank']").attr("target", "_blank");
+
+            //$(".toc a[target='_blank']").attr("target", "");
+
+            setTimeout(function () {
+                $(".toc a[target='_blank']").attr("target", "");
+            }, 500);
+
+        </script>
+
+</body>
+</html>   
